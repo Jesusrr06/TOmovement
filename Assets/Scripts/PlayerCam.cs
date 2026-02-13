@@ -2,26 +2,21 @@ using UnityEngine;
 
 public class PlayerCam : MonoBehaviour
 {
-    public float sensx;
-    public float sensy;
+    public GameObject player;
+    private Vector3 offset;
 
-    private void Start()
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
+        offset = transform.position - player.transform.position;
 
     }
 
-    private void Update()
+    // Update is called once per frame
+    void LateUpdate()
     {
-        float mouseX = Input.GetAxis("Mouse X")* Time.deltaTime*sensx;
-        float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * sensy;
-        yRotation +=  mouseX;
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xrotation, -90f, 90f);
-        transform.rotation = Quaternion.Euler(xrotation, yrotation, 0);
-        orientation = Quaternion.Euler(0, yrotation, 0);
+        transform.position = player.transform.position + offset;
 
     }
 }
+

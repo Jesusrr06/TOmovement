@@ -36,6 +36,7 @@ public class PlayerMovement3d : MonoBehaviour
         Vector2 movementVector = movementValue.Get<Vector2>();
         movementX = movementVector.x;
         movementY = movementVector.y;
+    
     }
 
     // Input System: add a "Sprint" action and bind it to this callback (hold-to-sprint)

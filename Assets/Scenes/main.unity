@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 1257694389}
   - component: {fileID: 1257694394}
   - component: {fileID: 1257694395}
+  - component: {fileID: 1257694396}
   m_Layer: 0
   m_Name: player
   m_TagString: Player
@@ -429,21 +430,65 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
   m_Actions: {fileID: -944628639613478452, guid: 24c016b4b3454b84196e921d5e041221, type: 3}
-  m_NotificationBehavior: 0
+  m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 1659340160}
   m_DeviceLostEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_DeviceRegainedEvent:
     m_PersistentCalls:
       m_Calls: []
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bd717f70-0749-44dd-b11d-f609998097f9
+    m_ActionName: PlayerOnGround/Move
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0bcae79d-97e8-4671-9874-f665fe0e43ec
+    m_ActionName: PlayerOnGround/Camera
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f589431c-bde2-4461-90a2-129700430411
+    m_ActionName: PlayerOnGround/jump
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 72f0f9f2-18fb-4922-af51-3669995fc55d
+    m_ActionName: PlayerOnGround/Attack
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5390451b-2040-4442-979b-8364a6bf608b
+    m_ActionName: PlayerOnGround/HeavyAttack
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4900c9e9-b755-4843-aa92-85717ae8a94c
+    m_ActionName: PlayerOnGround/Shoot
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cfcad01f-5b4b-4e6d-b752-4327bae21972
+    m_ActionName: PlayerOnGround/Block
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7109708d-89ef-48e0-bdd0-65cad6f5aec6
+    m_ActionName: PlayerOnGround/Sprint
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: Gamepad
-  m_DefaultActionMap: PlayerOnGround
+  m_DefaultControlScheme: keyboard
+  m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 9113690}
 --- !u!114 &1257694395
@@ -471,6 +516,21 @@ MonoBehaviour:
     m_Bits: 4294967295
   coyoteTime: 200
   extraJumps: 1
+  inputActions: {fileID: -944628639613478452, guid: 24c016b4b3454b84196e921d5e041221, type: 3}
+  playerInput: {fileID: 0}
+  rb: {fileID: 1257694389}
+--- !u!114 &1257694396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257694387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cde6d967e003fae489f917d5f8a8ff02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputSetup
 --- !u!1 &1444464488
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,17 +705,17 @@ MonoBehaviour:
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_PointAction: {fileID: -1654692200621890270, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_MoveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_SubmitAction: {fileID: 392368643174621059, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_CancelAction: {fileID: 7727032971491509709, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_LeftClickAction: {fileID: 3001919216989983466, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_MiddleClickAction: {fileID: -2185481485913320682, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_RightClickAction: {fileID: -4090225696740746782, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: 24c016b4b3454b84196e921d5e041221, type: 3}
+  m_PointAction: {fileID: -2866073157060134004, guid: 24c016b4b3454b84196e921d5e041221, type: 3}
+  m_MoveAction: {fileID: 7223852397378300250, guid: 24c016b4b3454b84196e921d5e041221, type: 3}
+  m_SubmitAction: {fileID: 0}
+  m_CancelAction: {fileID: 0}
+  m_LeftClickAction: {fileID: 3179250087811137244, guid: 24c016b4b3454b84196e921d5e041221, type: 3}
+  m_MiddleClickAction: {fileID: 0}
+  m_RightClickAction: {fileID: 0}
+  m_ScrollWheelAction: {fileID: 0}
+  m_TrackedDevicePositionAction: {fileID: 0}
+  m_TrackedDeviceOrientationAction: {fileID: 0}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0

@@ -67,7 +67,7 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "TOmovement.slnx",
+    "dotnet.defaultSolution": "TOMovement.slnx",
     "cSpell.words": [
         "Respawn"
     ]

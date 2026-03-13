@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 
 public class PlayerControls : MonoBehaviour
-{   
+{
     [SerializeField] private float speed = 5f;
     [SerializeField] private float jumpForce = 5f;
     private Rigidbody rb;
@@ -12,42 +12,37 @@ public class PlayerControls : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundCheckDistance = 0.1f;
     private DefaultInputActions.PlayerActions actions;
+    public float turnSpeed = 5f;
+    private Quaternion targetRotation;
+    private bool isTurning;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        targetRotation = transform.rotation;
+
         Debug.Log("PlayerControls started, Rigidbody assigned: " + (rb != null));
     }
 
 
-    void OnMove(InputValue movementValue)
+    private void OnMove(InputValue movementValue)
     {
         movementInput = movementValue.Get<Vector2>();
         Debug.Log("OnMove input: " + movementInput);
     }
 
-    void OnJump(InputValue value)
+    private void OnJump(InputValue value)
     {
         Debug.Log("OnJump called, isPressed: " + value.isPressed);
-        if (value.isPressed && isGrounded)
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+        if (value.isPressed)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             Debug.Log("Jump force applied");
         }
     }
 
-    private void Update()
-    {
-        if (rb.linearVelocity.y < 0.1f)  // Check only when falling downward
-        {
-            isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
-        }
-        else
-        {
-            isGrounded = false;  // Not checking, so assume not grounded
-        }
-        // Ground check
-        Debug.Log("Is grounded: " + isGrounded);
-    }
+
+
 
     private void FixedUpdate()
     {
@@ -55,8 +50,34 @@ public class PlayerControls : MonoBehaviour
         Vector3 forward = transform.forward * movementInput.y;
         Vector3 right = transform.right * movementInput.x;
         Vector3 movement = (forward + right).normalized * speed;
+        bool jumpPressed = Keyboard.current.spaceKey.isPressed; // Check jump input directly in FixedUpdate
+        if (jumpPressed && isGrounded) // Check jump input in FixedUpdate for better timing
+        {
+            movement = transform.up * jumpForce; // Simulate jump input
 
-        // Set velocity directly for precise control
+        }
+
         rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+    }
+
+
+    private void Update()
+    {
+        // Handle player rotation based on movement input
+        if (movementInput != Vector2.zero)
+        {
+            Vector3 direction = new Vector3(movementInput.x, 0, movementInput.y);
+            targetRotation = Quaternion.LookRotation(direction);
+            isTurning = true;
+        }
+
+        if (isTurning)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+            if (Quaternion.Angle(transform.rotation, targetRotation) < 1f)
+            {
+                isTurning = false; // Stop turning when close enough to target rotation
+            }
+        }
     }
 }

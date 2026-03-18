@@ -1,83 +1,151 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
-
-public class PlayerControls : MonoBehaviour
+public class ThirdPersonController : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private float jumpForce = 5f;
-    private Rigidbody rb;
-    private Vector2 movementInput;
-    private bool isGrounded;
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float groundCheckDistance = 0.1f;
-    private DefaultInputActions.PlayerActions actions;
-    public float turnSpeed = 5f;
-    private Quaternion targetRotation;
-    private bool isTurning;
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        targetRotation = transform.rotation;
+    [Header("Movement")]
+    public float moveSpeed = 5f;
+    public float rotationSpeed = 10f;
 
-        Debug.Log("PlayerControls started, Rigidbody assigned: " + (rb != null));
+    [Header("Camera")]
+    public Transform cameraTransform;
+    public Vector3 cameraOffset = new Vector3(0, 2, -4);
+    public float cameraSmoothSpeed = 5f;
+
+    [Header("Lock-On")]
+    public float lockOnRange = 15f;
+    public LayerMask enemyLayer;
+    public Transform currentTarget;
+
+    void Update()
+    {
+        HandleLockOnInput();
+       // HandleMovement();
     }
 
-
-    private void OnMove(InputValue movementValue)
+    void LateUpdate()
     {
-        movementInput = movementValue.Get<Vector2>();
-        Debug.Log("OnMove input: " + movementInput);
+       // HandleCamera();
     }
 
-    private void OnJump(InputValue value)
+    // ---------------- LOCK-ON ----------------
+    void HandleLockOnInput()
     {
-        Debug.Log("OnJump called, isPressed: " + value.isPressed);
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
-        if (value.isPressed)
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            Debug.Log("Jump force applied");
+            if (currentTarget is null)
+                FindTarget();
+            else
+                currentTarget = null;
         }
     }
 
-
-
-
-    private void FixedUpdate()
+    void FindTarget()
     {
-        // Calculate movement direction relative to player orientation
-        Vector3 forward = transform.forward * movementInput.y;
-        Vector3 right = transform.right * movementInput.x;
-        Vector3 movement = (forward + right).normalized * speed;
-        bool jumpPressed = Keyboard.current.spaceKey.isPressed; // Check jump input directly in FixedUpdate
-        if (jumpPressed && isGrounded) // Check jump input in FixedUpdate for better timing
+        Collider[] hits = Physics.OverlapSphere(transform.position, lockOnRange, enemyLayer);
+
+        float closestDistance = Mathf.Infinity;
+        Transform bestTarget = null;
+
+        foreach (Collider hit in hits)
         {
-            movement = transform.up * jumpForce; // Simulate jump input
+            float dist = Vector3.Distance(transform.position, hit.transform.position);
 
-        }
-
-        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
-    }
-
-
-    private void Update()
-    {
-        // Handle player rotation based on movement input
-        if (movementInput != Vector2.zero)
-        {
-            Vector3 direction = new Vector3(movementInput.x, 0, movementInput.y);
-            targetRotation = Quaternion.LookRotation(direction);
-            isTurning = true;
-        }
-
-        if (isTurning)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-            if (Quaternion.Angle(transform.rotation, targetRotation) < 1f)
+            if (dist < closestDistance)
             {
-                isTurning = false; // Stop turning when close enough to target rotation
+                closestDistance = dist;
+                bestTarget = hit.transform;
             }
         }
+
+        currentTarget = bestTarget;
     }
+
+    // ---------------- MOVEMENT ----------------
+   /* void HandleMovement()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 moveDirection;
+
+        if (currentTarget is not null)
+        {
+            // LOCK-ON MOVEMENT (strafe around enemy)
+            Vector3 toTarget = (currentTarget.position - transform.position).normalized;
+            Vector3 right = Vector3.Cross(Vector3.up, toTarget);
+
+            moveDirection = toTarget * v + right * h;
+
+            // Always face enemy
+            Vector3 lookDir = currentTarget.position - transform.position;
+            lookDir.y = 0;
+
+            if (lookDir != Vector3.zero)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            }
+        }
+        else
+        {
+            // FREE MOVEMENT (camera-relative)
+            Vector3 forward = cameraTransform.forward;
+            Vector3 right = cameraTransform.right;
+
+            forward.y = 0;
+            right.y = 0;
+
+            forward.Normalize();
+            right.Normalize();
+
+            moveDirection = forward * v + right * h;
+
+            // Rotate toward movement
+            if (moveDirection != Vector3.zero)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(moveDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
+            }
+        }
+
+        // Move player
+        transform.position += moveDirection * (moveSpeed * Time.deltaTime);
+    }
+
+    // ---------------- CAMERA ----------------
+    void HandleCamera()
+    {
+        if (currentTarget is not null)
+        {
+            // LOCK-ON CAMERA
+            Vector3 direction = (transform.position - currentTarget.position).normalized;
+
+            Vector3 desiredPosition = transform.position 
+                                    + direction * 4f 
+                                    + Vector3.up * 2f;
+
+            cameraTransform.position = Vector3.Lerp(
+                cameraTransform.position,
+                desiredPosition,
+                cameraSmoothSpeed * Time.deltaTime
+            );
+
+            Vector3 lookPoint = (transform.position + currentTarget.position) / 2f;
+            cameraTransform.LookAt(lookPoint);
+        }
+        else
+        {
+            // NORMAL FOLLOW CAMERA
+            Vector3 desiredPosition = transform.position 
+                                    + transform.TransformDirection(cameraOffset);
+
+            cameraTransform.position = Vector3.Lerp(
+                cameraTransform.position,
+                desiredPosition,
+                cameraSmoothSpeed * Time.deltaTime
+            );
+
+            cameraTransform.LookAt(transform.position + Vector3.up * 1.5f);
+        }
+    }*/
 }

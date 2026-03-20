@@ -3,7 +3,7 @@
     "name": "InputSystem",
     "maps": [
         {
-            "name": "PlayerOnGround",
+            "name": "player",
             "id": "2ae6fdbb-762a-4b45-96bb-9a74fb953932",
             "actions": [
                 {
@@ -114,9 +114,31 @@
                     "isPartOfComposite": true
                 },
                 {
+                    "name": "up",
+                    "id": "8662dd4c-217f-490f-81e1-eb3fcfd71953",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "down",
                     "id": "06bb5887-7eca-4003-9616-9bf8daedf307",
                     "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "f85ee80f-4948-4663-b9c9-756484a37fde",
+                    "path": "<Keyboard>/downArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
@@ -136,9 +158,31 @@
                     "isPartOfComposite": true
                 },
                 {
+                    "name": "left",
+                    "id": "e780353c-fe5f-4238-b7bd-f75202006833",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "right",
                     "id": "abac65f8-5587-4119-b478-8776e07a7f43",
                     "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "404dca8c-049a-4a6c-ac1b-754e925fe6de",
+                    "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
@@ -161,7 +205,7 @@
                     "name": "",
                     "id": "3b2fb924-c116-4fb6-9591-74b07dcd545e",
                     "path": "<Keyboard>/space",
-                    "interactions": "Press(pressPoint=1.401298E-45)",
+                    "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
                     "action": "jump",

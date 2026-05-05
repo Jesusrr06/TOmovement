@@ -19,20 +19,31 @@ public class PC : MonoBehaviour
     void Update()
     {
         Vector3 inputMovement= transform.forward * (Input.GetAxisRaw("Vertical") * movementSpeed);
-        characterController.Move(inputMovement * Time.deltaTime);
         
         transform.Rotate(Vector3.up * (Input.GetAxisRaw("Horizontal") * rotationSpeed) );
        Debug.Log(characterController.isGrounded);
-        if (Input.GetButtonDown("Jump") && characterController.isGrounded)
-        {
-            movementDirection.y = jumpSpeed;
-            Debug.Log("isjump should works");
-        }
-        movementDirection.y-=gravity* Time.deltaTime;
-        characterController.Move(movementDirection * Time.deltaTime);
-        
-        animator.SetBool("IsRunning", Input.GetAxisRaw("Vertical")!=0);            
-        animator.SetBool("IsJumping", !characterController.isGrounded);            
+        Jump();
+     
+        Vector3 finalMovement = inputMovement + movementDirection; 
+    characterController.Move(finalMovement * Time.deltaTime);
+    
+             animator.SetBool("IsJumping", !characterController.isGrounded);
+         
+         animator.SetBool("IsFalling", !characterController.isGrounded);
 
+      
+
+        animator.SetBool("IsRunning", Input.GetAxisRaw("Vertical")!=0);
+        
+    }
+
+
+    void Jump()
+    {   if (Input.GetButtonDown("Jump") && characterController.isGrounded)
+             {      
+                 movementDirection.y = jumpSpeed;    
+
+             }
+             movementDirection.y-=gravity* Time.deltaTime;
     }
 }

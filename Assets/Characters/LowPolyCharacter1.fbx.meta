@@ -46,11 +46,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: RIG-mYMetarig2|LPCRunAnimation1
-      takeName: RIG-mYMetarig2|LPCRunAnimation
+      name: RIG-mYMetarig2|LPCJumpAnimation (1)
+      takeName: RIG-mYMetarig2|LPCJumpAnimation
       internalID: -8589511266936726196
-      firstFrame: 0.2
-      lastFrame: 10.1
+      firstFrame: 12
+      lastFrame: 14
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -165,7 +165,7 @@ ModelImporter:
       name: RIG-mYMetarig2|LPCPunchinganumation
       takeName: RIG-mYMetarig2|LPCPunchinganumation
       internalID: -6273450077162131257
-      firstFrame: 0
+      firstFrame: 5
       lastFrame: 6
       wrapMode: 0
       orientationOffsetY: 0
@@ -173,7 +173,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0

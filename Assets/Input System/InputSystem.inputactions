@@ -192,6 +192,17 @@
                 },
                 {
                     "name": "",
+                    "id": "93169d81-2aeb-4d26-b9de-9c3f52d6f288",
+                    "path": "*/{Primary2DMotion}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "64d04a9e-9848-4c59-8278-373de83938a2",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",

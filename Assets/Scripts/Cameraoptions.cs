@@ -6,7 +6,7 @@ public class Cameraoptions : MonoBehaviour
     public GameObject followtransform;
     public Transform player; // Reference to the player character
      public Vector3 offset;  // Offset from the player
-     public float rotationSpeed = 5f; // Smoothness of rotation
+     public float rotationSpeed = 1f; // Smoothness of rotation
 
     [FormerlySerializedAs("Player2")] public GameObject lockontoTag;
     // Start is called once before the first execution of Update after the MonoBehaviour is created

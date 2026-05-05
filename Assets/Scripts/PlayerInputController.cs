@@ -15,9 +15,10 @@ public class PlayerInputController : MonoBehaviour
     }
 
     private void OnJump(InputValue inputValue)
-    {
+    { 
         if(inputValue.isPressed)
-        {
+        {      
+
             OnJumpButtonPressed?.Invoke();
         }
     }

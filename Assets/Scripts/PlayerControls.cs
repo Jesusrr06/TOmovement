@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+
 // ReSharper disable Unity.PerformanceCriticalCodeInvocation
 public class PlayerController : MonoBehaviour
 {
@@ -39,16 +39,17 @@ transform.rotation = Quaternion.RotateTowards(transform.rotation, direction,turn
     
 
         if (jumpTriggered)
-         {
-             velocity.y = jump;
-             jumpTriggered = false;
-         }
-         rb.linearVelocity = velocity;
+        {
+            velocity.y = jump;
+            jumpTriggered = false;
+        }
+        rb.linearVelocity = velocity;
     }
     private void JumpButtonPressed()
-    {
+    {Debug.Log("jump");
         if (groundController.IsGrounded)
-        {
+        { Debug.Log("jump2");
+            
             jumpTriggered = true;
         } 
     }

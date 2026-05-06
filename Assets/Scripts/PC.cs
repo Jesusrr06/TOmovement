@@ -6,6 +6,7 @@ public class PC : MonoBehaviour
     private Animator animator;
     [SerializeField]
     private float movementSpeed, rotationSpeed, jumpSpeed,gravity;
+   // public bool canMove = true;
 
     private Vector3 movementDirection= Vector3.zero;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -18,18 +19,25 @@ public class PC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 inputMovement= transform.forward * (Input.GetAxisRaw("Vertical") * movementSpeed);
-        
-        transform.Rotate(Vector3.up * (Input.GetAxisRaw("Horizontal") * rotationSpeed) );
-       Debug.Log(characterController.isGrounded);
+
+//Debug.Log(canMove);
+
+        Vector3 inputMovement = transform.forward * (Input.GetAxisRaw("Vertical") * movementSpeed);
+
+        transform.Rotate(Vector3.up * (Input.GetAxisRaw("Horizontal") * rotationSpeed));
+        Debug.Log(characterController.isGrounded);
         Jump();
-     
-        Vector3 finalMovement = inputMovement + movementDirection; 
-    characterController.Move(finalMovement * Time.deltaTime);
-    
-             animator.SetBool("IsJumping", !characterController.isGrounded);
+
+        
+        Vector3 finalMovement = inputMovement + movementDirection;
+     //   if (!canMove)
+       // {
+         characterController.Move(finalMovement * Time.deltaTime);
+      //  }
+
+        animator.SetBool("IsJumping", !characterController.isGrounded);
          
-         animator.SetBool("IsFalling", !characterController.isGrounded);
+        animator.SetBool("IsFalling", !characterController.isGrounded);
 
       
 
@@ -46,4 +54,7 @@ public class PC : MonoBehaviour
              }
              movementDirection.y-=gravity* Time.deltaTime;
     }
+
+    
+     
 }

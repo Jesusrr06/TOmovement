@@ -460,6 +460,11 @@ MonoBehaviour:
       Wait: 1
       Time: 2
     Restrictions: 0
+--- !u!4 &451765253 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2025224234291674251, guid: 98f9c92113aecc9408a1660569c0e98c, type: 3}
+  m_PrefabInstance: {fileID: 1078047762999976806}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &480595281
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,6 +593,7 @@ GameObject:
   - component: {fileID: 1257694400}
   - component: {fileID: 1257694401}
   - component: {fileID: 1257694402}
+  - component: {fileID: 1257694403}
   m_Layer: 0
   m_Name: player
   m_TagString: Player1
@@ -797,7 +803,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1257694387}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: fe31c843eae02da439ab355d9ac768df, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 40425f0c78d26a549929822fb4a3c72e, type: 3}
   m_Controller: {fileID: 9100000, guid: ca907b9a08c2a3d40899c9de5ad93406, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -810,6 +816,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1257694403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257694387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b6f6139b59df444e84ebe3980e40682, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
+  projectilePrefab: {fileID: 1864170344}
+  firePoint: {fileID: 451765253}
 --- !u!4 &1306985992 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7500777442376217042, guid: 98f9c92113aecc9408a1660569c0e98c, type: 3}
@@ -1089,7 +1109,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1757771269}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
@@ -1141,7 +1161,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -1223,6 +1243,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1864170344 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4936832806897250000, guid: 98f9c92113aecc9408a1660569c0e98c, type: 3}
+  m_PrefabInstance: {fileID: 1078047762999976806}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1078047762999976806
 PrefabInstance:
   m_ObjectHideFlags: 0

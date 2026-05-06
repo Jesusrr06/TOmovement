@@ -19,30 +19,30 @@ public class PlayerAttack : MonoBehaviour
     void Update()
     {
       
-        if(Input.GetButtonDown("Attack"))
+        if(Input.GetButton("Attack"))
         {
             animator.SetTrigger("Punching");
             
         }
     
-        /*
+        
      
-        if (Input.GetButtonDown("Shoot"))
+        if (Input.GetButton("Shoot"))
         {
             Debug.Log("si");
             animator.SetTrigger("Shooting");
-              movement.canMove = false;
+            //  movement.canMove = false;
             Shoot();
-             movement.canMove = true;
+          //   movement.canMove = true;
                      
         }
-      */
-        if(Input.GetButtonDown("HeavyAttack"))
+      
+        if(Input.GetButton("HeavyAttack"))
         {
             animator.SetTrigger("Kicking");
             
         }
-        if(Input.GetButtonDown("Block"))
+        if(Input.GetButton("Block"))
         {
             animator.SetBool("ISGuarding", Input.GetKeyDown("IsGuarding"));
         }

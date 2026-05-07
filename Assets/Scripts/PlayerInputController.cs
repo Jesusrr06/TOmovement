@@ -21,5 +21,11 @@ public class PlayerInputController : MonoBehaviour
 
             OnJumpButtonPressed?.Invoke();
         }
+        
     }
+
+    private void Attack()
+    {
+    }
+
 }

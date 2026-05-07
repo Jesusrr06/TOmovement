@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "name": "InputSystem",
+    "name": "InputSystemP2",
     "maps": [
         {
             "name": "Player1",
@@ -16,7 +16,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump",
+                    "name": "jump",
                     "type": "Button",
                     "id": "f589431c-bde2-4461-90a2-129700430411",
                     "expectedControlType": "",
@@ -146,7 +146,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Jump",
+                    "action": "jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -157,7 +157,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
-                    "action": "Jump",
+                    "action": "jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -256,7 +256,7 @@
             "id": "ca04626a-8f4d-42ba-b391-a0959e22b2c4",
             "actions": [
                 {
-                    "name": "Move",
+                    "name": "OnMove",
                     "type": "Value",
                     "id": "601bde4c-2c70-4bf3-b0b8-792219c9092d",
                     "expectedControlType": "Vector2",
@@ -318,7 +318,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Move",
+                    "action": "OnMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -329,7 +329,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "OnMove",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -340,7 +340,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
-                    "action": "Move",
+                    "action": "OnMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -351,7 +351,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
-                    "action": "Move",
+                    "action": "OnMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -362,7 +362,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
-                    "action": "Move",
+                    "action": "OnMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -373,7 +373,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
-                    "action": "Move",
+                    "action": "OnMove",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -384,7 +384,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
-                    "action": "Move",
+                    "action": "OnMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

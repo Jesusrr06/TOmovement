@@ -1,60 +1,104 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PC : MonoBehaviour
 {
     private CharacterController characterController;
     private Animator animator;
-    [SerializeField]
-    private float movementSpeed, rotationSpeed, jumpSpeed,gravity;
-   // public bool canMove = true;
 
-    private Vector3 movementDirection= Vector3.zero;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Movement")]
+    [SerializeField] private float movementSpeed = 5f;
+    [SerializeField] private float rotationSpeed = 10f;
+
+    [Header("Jump")]
+    [SerializeField] private float jumpSpeed = 5f;
+    [SerializeField] private float gravity = 9.81f;
+
+    private Vector2 moveInput;
+    private float verticalVelocity;
+
     void Start()
-    {
+    { 
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-
-//Debug.Log(canMove);
-
-        Vector3 inputMovement = transform.forward * (Input.GetAxisRaw("Vertical") * movementSpeed);
-
-        transform.Rotate(Vector3.up * (Input.GetAxisRaw("Horizontal") * rotationSpeed));
-        Debug.Log(characterController.isGrounded);
-        Jump();
-
-        
-        Vector3 finalMovement = inputMovement + movementDirection;
-     //   if (!canMove)
-       // {
-         characterController.Move(finalMovement * Time.deltaTime);
-      //  }
-
-        animator.SetBool("IsJumping", !characterController.isGrounded);
-         
-        animator.SetBool("IsFalling", !characterController.isGrounded);
-
-      
-
-        animator.SetBool("IsRunning", Input.GetAxisRaw("Vertical")!=0);
-        
+        Debug.Log(moveInput);
+        HandleMovement();
+        HandleJump();
+        ApplyMovement();
+        HandleRotation();
+        HandleAnimations();
     }
 
-
-    void Jump()
-    {   if (Input.GetButtonDown("Jump") && characterController.isGrounded)
-             {      
-                 movementDirection.y = jumpSpeed;    
-
-             }
-             movementDirection.y-=gravity* Time.deltaTime;
+    // ---------------- MOVEMENT ----------------
+    void HandleMovement()
+    {
+        // Solo input horizontal
     }
 
-    
-     
+    void ApplyMovement()
+    {
+        Vector3 input = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 move = Camera.main.transform.TransformDirection(input);
+
+        move *= movementSpeed;
+
+        move.y = verticalVelocity;
+
+        characterController.Move(move * Time.deltaTime);
+    }
+
+    // ---------------- ROTATION ----------------
+    void HandleRotation()
+    {
+        Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
+
+        if (direction.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
+        }
+    }
+
+    // ---------------- JUMP ----------------
+    void HandleJump()
+    {
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && characterController.isGrounded)
+        {
+            verticalVelocity = jumpSpeed;
+        }
+
+        verticalVelocity -= gravity * Time.deltaTime;
+
+        if (characterController.isGrounded && verticalVelocity < 0)
+        {
+            verticalVelocity = -2f;
+        }
+    }
+
+    // ---------------- ANIMATIONS ----------------
+    void HandleAnimations()
+    {
+        bool grounded = characterController.isGrounded;
+        Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
+
+        animator.SetBool("IsRunning", direction.sqrMagnitude > 0.01f);
+        animator.SetBool("IsJumping", !grounded && verticalVelocity > 0);
+        animator.SetBool("IsFalling", !grounded && verticalVelocity < 0);
+    }
+
+    // ---------------- INPUT SYSTEM ----------------
+    public void OnMove(InputValue value)
+    {
+        Debug.Log("FUNCIONA INPUT");
+        moveInput = value.Get<Vector2>();
+    }
 }

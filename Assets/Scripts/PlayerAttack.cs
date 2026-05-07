@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 { 
@@ -19,7 +20,7 @@ public class PlayerAttack : MonoBehaviour
     void Update()
     {
       
-        if(Input.GetButton("Attack"))
+        if(Keyboard.current.eKey.isPressed)
         {
             animator.SetTrigger("Punching");
             
@@ -27,7 +28,7 @@ public class PlayerAttack : MonoBehaviour
     
         
      
-        if (Input.GetButton("Shoot"))
+        if (Keyboard.current.rKey.isPressed)
         {
             Debug.Log("si");
             animator.SetTrigger("Shooting");
@@ -37,14 +38,14 @@ public class PlayerAttack : MonoBehaviour
                      
         }
       
-        if(Input.GetButton("HeavyAttack"))
+        if(Keyboard.current.qKey.isPressed)
         {
             animator.SetTrigger("Kicking");
             
         }
-        if(Input.GetButton("Block"))
+        if(Keyboard.current.fKey.isPressed)
         {
-            animator.SetBool("ISGuarding", Input.GetKeyDown("IsGuarding"));
+            animator.SetBool("IsGuarding", Keyboard.current.fKey.isPressed);
         }
         
     }

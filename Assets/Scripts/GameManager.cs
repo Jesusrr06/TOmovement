@@ -1,29 +1,62 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private Transform spawn1;
-    [SerializeField] private Transform spawn2;
+    public GameObject[] playerPrefabs;
+
+    public Transform spawnP1;
+    public Transform spawnP2;
+    public OrbitalCamera cam;
 
     void Start()
     {
-        SpawnPlayers();
+        StartCoroutine(SpawnPlayers());
     }
 
-    void SpawnPlayers()
+    IEnumerator SpawnPlayers()
     {
-        GameObject p1 = Instantiate(playerPrefab, spawn1.position, spawn1.rotation);
-        GameObject p2 = Instantiate(playerPrefab, spawn2.position, spawn2.rotation);
+        // =========================
+        // PLAYER 1
+        // =========================
+        GameObject player1 = new GameObject("Player1");
+        player1.transform.position = spawnP1.position;
+        player1.transform.rotation = spawnP1.rotation;
 
-        PlayerInput input1 = p1.GetComponent<PlayerInput>();
-        PlayerInput input2 = p2.GetComponent<PlayerInput>();
+        GameObject model1 = Instantiate(
+            playerPrefabs[GameData.Player1Character]
+        );
 
-        input1.SwitchCurrentActionMap("Player1");
-        input2.SwitchCurrentActionMap("Player2");
+        model1.transform.SetParent(player1.transform);
+        model1.transform.localPosition = Vector3.zero;
+        model1.transform.localRotation = Quaternion.identity;
 
-        p1.name = "Player1";
-        p2.name = "Player2";
+        player1.tag = "Player1";
+
+
+        // =========================
+        // PLAYER 2
+        // =========================
+        GameObject player2 = new GameObject("Player2");
+        player2.transform.position = spawnP2.position;
+        player2.transform.rotation = spawnP2.rotation;
+
+        GameObject model2 = Instantiate(
+            playerPrefabs[GameData.Player2Character]
+        );
+
+        model2.transform.SetParent(player2.transform);
+        model2.transform.localPosition = Vector3.zero;
+        model2.transform.localRotation = Quaternion.identity;
+
+        player2.tag = "Player2";
+
+        yield return null;
+   
+
+        // 🔥 AQUÍ LA MAGIA
+        cam.player1 = player1.transform;
+        cam.player2 = player2.transform;
     }
+    
 }

@@ -265,7 +265,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "jump",
+                    "name": "Jump",
                     "type": "Button",
                     "id": "cfdd9663-8e2c-42be-b37b-3a513651c39e",
                     "expectedControlType": "",
@@ -395,7 +395,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "jump",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -406,7 +406,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";keyboard",
-                    "action": "jump",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -495,6 +495,62 @@
                     "processors": "",
                     "groups": ";keyboard",
                     "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "numbp1",
+            "id": "a36dda81-447d-4d00-90ab-c13f45afd264",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "5769ef4c-80b9-402b-aa89-87b8561cf54a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4b8bab91-de02-462d-b519-b27e30256c14",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "numbp2",
+            "id": "e8f1b367-e1e0-4ef2-ac48-a9f81f496dbc",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "d3fdbc4d-8ff5-4e1a-b39b-e12e0276fe0d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "68307d20-186a-4822-9ade-bd83cb7b675d",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

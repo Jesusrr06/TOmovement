@@ -11,54 +11,97 @@ public class PC : MonoBehaviour
     [SerializeField] private float rotationSpeed = 10f;
 
     [Header("Jump")]
-    [SerializeField] private float jumpSpeed = 5f;
-    [SerializeField] private float gravity = 9.81f;
+    [SerializeField] private float jumpHeight = 2f;
+    [SerializeField] private float gravity = -9.81f;
+
+    [Header("Combat")]
+    [SerializeField] private bool canMoveWhilePunching = false;
 
     private Vector2 moveInput;
+    private Vector3 moveDirection;
+   
+    [Header("Player Info")]
+    public int playerId;
+    
+    
     private float verticalVelocity;
 
+    private bool jumpPressed;
+    private bool isPunching;
+    private Camera camera1;
+
     void Start()
-    { 
+    {
+        camera1 = Camera.main;
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        Debug.Log(moveInput);
+        HandleGravity();
         HandleMovement();
-        HandleJump();
-        ApplyMovement();
         HandleRotation();
         HandleAnimations();
     }
 
-    // ---------------- MOVEMENT ----------------
+    // =====================================
+    // MOVEMENT
+    // =====================================
     void HandleMovement()
     {
-        // Solo input horizontal
+        // Disable movement while punching
+        if (isPunching && !canMoveWhilePunching)
+        {
+            moveDirection = Vector3.zero;
+        }
+        else
+        {
+            // Camera-relative movement
+            Vector3 camForward = camera1.transform.forward;
+            Vector3 camRight = camera1.transform.right;
+
+            camForward.y = 0;
+            camRight.y = 0;
+
+            camForward.Normalize();
+            camRight.Normalize();
+
+            moveDirection =
+                camForward * moveInput.y +
+                camRight * moveInput.x;
+
+            moveDirection *= movementSpeed;
+        }
+
+        // Jump
+        if (jumpPressed && characterController.isGrounded && !isPunching)
+        {
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+
+            // consume jump input
+            jumpPressed = false;
+        }
+
+        // Apply gravity
+        moveDirection.y = verticalVelocity;
+
+        // Move player
+        characterController.Move(moveDirection * Time.deltaTime);
     }
 
-    void ApplyMovement()
-    {
-        Vector3 input = new Vector3(moveInput.x, 0, moveInput.y);
-        Vector3 move = Camera.main.transform.TransformDirection(input);
-
-        move *= movementSpeed;
-
-        move.y = verticalVelocity;
-
-        characterController.Move(move * Time.deltaTime);
-    }
-
-    // ---------------- ROTATION ----------------
+    // =====================================
+    // ROTATION
+    // =====================================
     void HandleRotation()
     {
-        Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 horizontalDirection = moveDirection;
+        horizontalDirection.y = 0;
 
-        if (direction.sqrMagnitude > 0.01f)
+        if (horizontalDirection.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            Quaternion targetRotation =
+                Quaternion.LookRotation(horizontalDirection);
 
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
@@ -68,37 +111,79 @@ public class PC : MonoBehaviour
         }
     }
 
-    // ---------------- JUMP ----------------
-    void HandleJump()
+    // =====================================
+    // GRAVITY
+    // =====================================
+    void HandleGravity()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && characterController.isGrounded)
-        {
-            verticalVelocity = jumpSpeed;
-        }
-
-        verticalVelocity -= gravity * Time.deltaTime;
-
+        // Small downward force while grounded
         if (characterController.isGrounded && verticalVelocity < 0)
         {
             verticalVelocity = -2f;
         }
+
+        // Apply gravity
+        verticalVelocity += gravity * Time.deltaTime;
     }
 
-    // ---------------- ANIMATIONS ----------------
+    // =====================================
+    // ANIMATIONS
+    // =====================================
     void HandleAnimations()
     {
-        bool grounded = characterController.isGrounded;
-        Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 horizontalMove = moveDirection;
+        horizontalMove.y = 0;
 
-        animator.SetBool("IsRunning", direction.sqrMagnitude > 0.01f);
-        animator.SetBool("IsJumping", !grounded && verticalVelocity > 0);
-        animator.SetBool("IsFalling", !grounded && verticalVelocity < 0);
+        bool isRunning = horizontalMove.sqrMagnitude > 0.1f;
+
+        animator.SetBool("IsRunning", isRunning);
+
+        animator.SetBool(
+            "IsJumping",
+            !characterController.isGrounded && verticalVelocity > 0
+        );
+
+        animator.SetBool(
+            "IsFalling",
+            !characterController.isGrounded && verticalVelocity < 0
+        );
+
+        animator.SetBool("IsPunching", isPunching);
     }
 
-    // ---------------- INPUT SYSTEM ----------------
+    // =====================================
+    // INPUT SYSTEM
+    // =====================================
+
     public void OnMove(InputValue value)
     {
-        Debug.Log("FUNCIONA INPUT");
         moveInput = value.Get<Vector2>();
+    }
+
+    public void OnJump(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            jumpPressed = true;
+        }
+    }
+
+    public void OnPunch(InputValue value)
+    {
+        if (value.isPressed && !isPunching)
+        {
+            isPunching = true;
+            animator.SetTrigger("Punch");
+        }
+    }
+
+    // =====================================
+    // ANIMATION EVENT
+    // Add this at the END of the punch animation
+    // =====================================
+
+    public void EndPunch()
+    {
+        isPunching = false;
     }
 }

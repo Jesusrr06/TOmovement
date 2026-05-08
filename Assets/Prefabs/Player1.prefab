@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 4407513084567847790}
   m_Layer: 0
   m_Name: Player1
-  m_TagString: Player1
+  m_TagString: Player2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -190,8 +190,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PC
   movementSpeed: 2
   rotationSpeed: 2
-  jumpSpeed: 7
+  jumpHeight: 2
   gravity: 9
+  canMoveWhilePunching: 0
 --- !u!143 &945759486438812492
 CharacterController:
   m_ObjectHideFlags: 0

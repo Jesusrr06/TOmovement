@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+     
         StartCoroutine(SpawnPlayers());
     }
 
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
         player2.transform.rotation = spawnP2.rotation;
 
         GameObject model2 = Instantiate(
-            playerPrefabs[GameData.Player2Character]
+            playerPrefabs[GameData.Player2Character] 
         );
 
         model2.transform.SetParent(player2.transform);
@@ -52,11 +53,13 @@ public class GameManager : MonoBehaviour
         player2.tag = "Player2";
 
         yield return null;
-   
 
-        // 🔥 AQUÍ LA MAGIA
+        WaitForSeconds wait = new WaitForSeconds(0.2f);
+        
+        // Asignada la camara
         cam.player1 = player1.transform;
-        cam.player2 = player2.transform;
+        cam.player2 = player2.transform; 
+    
     }
     
 }

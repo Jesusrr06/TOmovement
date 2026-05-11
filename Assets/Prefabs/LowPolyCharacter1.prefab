@@ -1,5 +1,73 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4391736381753603647
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8207942680301170881}
+  - component: {fileID: 3029199581121279493}
+  - component: {fileID: 4243473023353343725}
+  m_Layer: 0
+  m_Name: PunchHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8207942680301170881
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4391736381753603647}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.558, y: 1.221, z: 0.761}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7294151613313468905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3029199581121279493
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4391736381753603647}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.46792734, y: 1, z: 1}
+  m_Center: {x: 0.26603633, y: 0, z: 0}
+--- !u!114 &4243473023353343725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4391736381753603647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5551876e58258a64884269e250071f66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hitbox
+  owner: {fileID: -4947817433721442783}
+  damage: 10
 --- !u!1001 &7111378710654692866
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10,15 +78,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.20679
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13743997
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.17714
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -58,11 +126,11 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: ca907b9a08c2a3d40899c9de5ad93406, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -7772805493115946707}
+      addedObject: {fileID: 8207942680301170881}
+    m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4394024430686486247}
@@ -72,42 +140,20 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       insertIndex: -1
       addedObject: {fileID: -4947817433721442783}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7041872748250133001}
   m_SourcePrefab: {fileID: 100100000, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+--- !u!4 &7294151613313468905 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+  m_PrefabInstance: {fileID: 7111378710654692866}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7958380144892318547 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
   m_PrefabInstance: {fileID: 7111378710654692866}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-7772805493115946707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7958380144892318547}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: 24c016b4b3454b84196e921d5e041221, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: keyboard
-  m_DefaultActionMap: Player1
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!54 &4394024430686486247
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -133,7 +179,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!143 &917702714235511920
 CharacterController:
@@ -153,13 +199,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 1.9
+  m_Radius: 0.4
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!114 &-4947817433721442783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,9 +218,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb0ea1705d3f7d044b97cdc639e7a693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PC
-  movementSpeed: 3
-  rotationSpeed: 3
+  movementSpeed: 5
+  rotationSpeed: 5
   jumpHeight: 2
   gravity: -9.81
-  canMoveWhilePunching: 0
+  canMoveWhileAttacking: 0
+  punchHitbox: {fileID: 1349998662384948, guid: f6ce33b91f6ffe54cadacbf4bb112440, type: 3}
+  enemyHealth: {fileID: 1459198998879762148, guid: ce7928abe2f14c7418a8ec6712a9bfaf, type: 3}
   playerId: 1
+--- !u!114 &-7041872748250133001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7958380144892318547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a35a54c8711e74886f357a140e9689, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  currentHealth: 0
+  healthBar: {fileID: 0}

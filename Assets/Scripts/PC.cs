@@ -18,8 +18,7 @@ public class PC : MonoBehaviour
     [Header("Combat")]
     [SerializeField] private bool canMoveWhileAttacking = false;
 
-    public GameObject punchHitbox;
-    public Health enemyHealth;
+    [FormerlySerializedAs("punchHitbox")] public Hitbox hitboxes;
 
     [Header("Player Info")]
     public int playerId;
@@ -41,10 +40,24 @@ public class PC : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
 
-        if (punchHitbox != null)
-            punchHitbox.GetComponent<Hitbox>().owner = this;
+        FindHitbox();
 
-        FindEnemyHealth();
+
+    }
+    
+
+    private void FindHitbox()
+    {
+        // true = incluye objetos inactivos
+        hitboxes = GetComponentInChildren<Hitbox>(true);
+
+        if (hitboxes == null)
+        {
+            Debug.LogError($"No se encontró Hitbox en {gameObject.name}");
+            return;
+        }
+
+        hitboxes.owner = this;
     }
 
     private void Update()
@@ -55,18 +68,8 @@ public class PC : MonoBehaviour
         HandleGravity();
         HandleAnimations();
     }
-    private void Awake()
-    {
-        if (punchHitbox == null)
-        {
-            Transform t = transform.Find("PunchHitbox");
 
-            if (t != null)
-                punchHitbox = t.gameObject;
-            else
-                Debug.LogError("PunchHitbox NO encontrado en prefab");
-        }
-    }
+   
     // ========================= INPUT =========================
     private void HandleInput()
     {
@@ -193,9 +196,20 @@ public class PC : MonoBehaviour
         _isPunching = true;
         _animator.SetTrigger("IsPunching");
 
-        StartCoroutine(EnableHitbox());
+        hitboxes.BeginAttack();
+        StartCoroutine(PunchRoutine());
+    }
 
-        StartCoroutine(ResetPunch());
+    private IEnumerator PunchRoutine()
+    {
+        yield return null; // Espera un frame
+
+        hitboxes.EnableArm();  // Activamos el collider
+
+        yield return new WaitForSeconds(0.25f); // Tiempo del golpe
+
+        hitboxes.DisableArm();
+        _isPunching = false;
     }
 
     private void Kick()
@@ -205,9 +219,24 @@ public class PC : MonoBehaviour
         _isKicking = true;
         _animator.SetTrigger("IsKicking");
 
-        StartCoroutine(ResetKick());
+        hitboxes.BeginAttack();
+        StartCoroutine(KickRoutine());
     }
 
+    private IEnumerator KickRoutine()
+    {
+        yield return null; // Espera un frame
+
+        hitboxes.EnableLeg();
+
+        yield return new WaitForSeconds(0.25f);
+
+        hitboxes.DisableLeg();
+        _isKicking = false;
+    }
+  
+
+ 
     private void Shoot()
     {
         if (_isShooting) return;
@@ -218,31 +247,23 @@ public class PC : MonoBehaviour
         StartCoroutine(ResetShoot());
     }
 
-    // ========================= HITBOX =========================
-    private IEnumerator EnableHitbox()
-    {
-        if (punchHitbox == null) yield break;
-
-        punchHitbox.SetActive(true);
-
-        yield return new WaitForSeconds(0.2f);
-
-        punchHitbox.SetActive(false);
-    }
-
     // ========================= RESET =========================
+ 
+    private IEnumerator ResetKick()
+         {
+             yield return new WaitForSeconds(0.25f);
+             hitboxes.DisableLeg();
+             _isKicking = false;
+         }
     private IEnumerator ResetPunch()
     {
+
+
         yield return new WaitForSeconds(0.25f);
+        hitboxes.DisableArm(); // desactivar
+
         _isPunching = false;
     }
-
-    private IEnumerator ResetKick()
-    {
-        yield return new WaitForSeconds(0.25f);
-        _isKicking = false;
-    }
-
     private IEnumerator ResetShoot()
     {
         yield return new WaitForSeconds(0.25f);
@@ -250,14 +271,5 @@ public class PC : MonoBehaviour
     }
 
     // ========================= ENEMY FIND =========================
-    private void FindEnemyHealth()
-    {
-        PC[] players = FindObjectsByType<PC>();
-
-        foreach (PC p in players)
-        {
-            if (p != this)
-                enemyHealth = p.GetComponent<Health>();
-        }
-    }
+    
 }

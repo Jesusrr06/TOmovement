@@ -1,22 +1,21 @@
 using UnityEngine;
-using UnityEngine.UI;
+using System;
 
 public class Health : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float currentHealth;
 
-    public Slider healthBar;
+    public Action<float> OnHealthChanged;
 
-    void Start()
+    private void Awake()
     {
         currentHealth = maxHealth;
+    }
 
-        if (healthBar != null)
-        {
-            healthBar.maxValue = maxHealth;
-            healthBar.value = currentHealth;
-        }
+    private void Start()
+    {
+        OnHealthChanged?.Invoke(1f);
     }
 
     public void TakeDamage(float damage)
@@ -24,12 +23,6 @@ public class Health : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        UpdateBar();
-    }
-
-    void UpdateBar()
-    {
-        if (healthBar != null)
-            healthBar.value = currentHealth;
+        OnHealthChanged?.Invoke(currentHealth / maxHealth);
     }
 }

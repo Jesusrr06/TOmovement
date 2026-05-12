@@ -1,73 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4391736381753603647
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8207942680301170881}
-  - component: {fileID: 3029199581121279493}
-  - component: {fileID: 4243473023353343725}
-  m_Layer: 0
-  m_Name: PunchHitbox
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8207942680301170881
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391736381753603647}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.558, y: 1.221, z: 0.761}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7294151613313468905}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3029199581121279493
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391736381753603647}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.46792734, y: 1, z: 1}
-  m_Center: {x: 0.26603633, y: 0, z: 0}
---- !u!114 &4243473023353343725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391736381753603647}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5551876e58258a64884269e250071f66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Hitbox
-  owner: {fileID: -4947817433721442783}
-  damage: 10
 --- !u!1001 &7111378710654692866
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -126,10 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: ca907b9a08c2a3d40899c9de5ad93406, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8207942680301170881}
+    m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       insertIndex: -1
@@ -142,13 +71,17 @@ PrefabInstance:
       addedObject: {fileID: -4947817433721442783}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -7041872748250133001}
+      addedObject: {fileID: 1950347941441648000}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4084849331967017418}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3421492784944907353}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2731349911477244955}
   m_SourcePrefab: {fileID: 100100000, guid: 98aae7ad2f812294caa983016687908f, type: 3}
---- !u!4 &7294151613313468905 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98aae7ad2f812294caa983016687908f, type: 3}
-  m_PrefabInstance: {fileID: 7111378710654692866}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7958380144892318547 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
@@ -223,10 +156,68 @@ MonoBehaviour:
   jumpHeight: 2
   gravity: -9.81
   canMoveWhileAttacking: 0
-  punchHitbox: {fileID: 1349998662384948, guid: f6ce33b91f6ffe54cadacbf4bb112440, type: 3}
-  enemyHealth: {fileID: 1459198998879762148, guid: ce7928abe2f14c7418a8ec6712a9bfaf, type: 3}
+  hitboxes: {fileID: 0}
+  enemyHealth: {fileID: 0}
   playerId: 1
---- !u!114 &-7041872748250133001
+--- !u!65 &1950347941441648000
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7958380144892318547}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.57556653, y: 0.30803466, z: 1.0383931}
+  m_Center: {x: -0.054390192, y: 1.2815493, z: 0.6782773}
+--- !u!65 &4084849331967017418
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7958380144892318547}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.35906076, y: 0.57647574, z: 1.0240917}
+  m_Center: {x: 0.13490313, y: 0.5841716, z: 0.71591866}
+--- !u!114 &3421492784944907353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7958380144892318547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5551876e58258a64884269e250071f66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hitbox
+  owner: {fileID: -4947817433721442783}
+  armCollider: {fileID: 1950347941441648000}
+  legCollider: {fileID: 4084849331967017418}
+  damage: 10
+--- !u!114 &2731349911477244955
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -239,5 +230,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
-  currentHealth: 0
-  healthBar: {fileID: 0}
+  currentHealth: 100

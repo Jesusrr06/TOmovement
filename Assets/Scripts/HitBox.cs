@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Hitbox : MonoBehaviour
 {
@@ -10,19 +11,17 @@ public class Hitbox : MonoBehaviour
     public Collider legCollider;
 
     private bool _hasHitThisAttack = false;
+    private bool _isAttacking = false;
 
     [Header("Combat")]
     public float damage = 10f;
 
     private void Awake()
     {
-        // Si no se asignó owner desde el manager
-        if (owner == null)
+        if (owner is null)
             owner = GetComponentInParent<PC>();
 
-        // Desactivamos colliders al inicio para evitar daño al spawnear
-        if (armCollider != null) armCollider.enabled = false;
-        if (legCollider != null) legCollider.enabled = false;
+        DisableAll();
     }
 
     public void SetOwner(PC p)
@@ -30,33 +29,37 @@ public class Hitbox : MonoBehaviour
         owner = p;
     }
 
-    // Llamar cada vez que empieza un ataque
     public void BeginAttack()
     {
         _hasHitThisAttack = false;
+        _isAttacking = true;
+        // Debug para indicar qué tecla activó el ataque
+    }
+
+    public void EndAttack()
+    {
+        _isAttacking = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_hasHitThisAttack) return;
+        if (!_isAttacking || _hasHitThisAttack) return;
+
+        if (other.transform.IsChildOf(owner.transform)) return;
 
         PC target = other.GetComponentInParent<PC>();
-        if (target == null) return;
-
-        // Ignorar al dueño
-        if (target == owner) return;
-
+        if (target is null) return;
 
         Health hp = target.GetComponentInChildren<Health>();
-        if (hp != null)
+        if (hp is not null)
         {
             _hasHitThisAttack = true;
-            Debug.Log(owner.name + " golpea a " + target.name);
             hp.TakeDamage(damage);
+            Debug.Log($"{owner.name} hit {target.name} for {damage} damage");
         }
     }
 
-    // ================= Habilitar/Deshabilitar colliders =================
+    // = Habilitar/Deshabilitar colliders =
     public void EnableArm() { if (armCollider is not null) armCollider.enabled = true; }
     public void DisableArm() { if (armCollider is not null) armCollider.enabled = false; }
     public void EnableLeg() { if (legCollider is not null) legCollider.enabled = true; }

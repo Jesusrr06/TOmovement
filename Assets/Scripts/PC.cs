@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 public class PC : MonoBehaviour
@@ -48,16 +50,22 @@ public class PC : MonoBehaviour
 
     private void FindHitbox()
     {
-        // true = incluye objetos inactivos
-        hitboxes = GetComponentInChildren<Hitbox>(true);
+        Debug.Log($"{name} FindHitbox called");
 
-        if (hitboxes == null)
+        Hitbox[] hitboxesArray = GetComponentsInChildren<Hitbox>(true);
+        foreach (Hitbox hb in hitboxesArray)
         {
-            Debug.LogError($"No se encontró Hitbox en {gameObject.name}");
-            return;
+            Debug.Log($"{name} checking hitbox {hb.gameObject.name}");
+            if (hb.armCollider != null || hb.legCollider != null)
+            {
+                hitboxes = hb;
+                hitboxes.owner = this;
+                Debug.Log($"{name} assigned hitbox {hb.gameObject.name} to owner {name}");
+                return;
+            }
         }
 
-        hitboxes.owner = this;
+        Debug.LogError($"{name} no valid Hitbox found!");
     }
 
     private void Update()
@@ -218,7 +226,6 @@ public class PC : MonoBehaviour
 
         _isKicking = true;
         _animator.SetTrigger("IsKicking");
-
         hitboxes.BeginAttack();
         StartCoroutine(KickRoutine());
     }

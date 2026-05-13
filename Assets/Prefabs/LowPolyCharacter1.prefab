@@ -152,12 +152,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PC
   movementSpeed: 5
-  rotationSpeed: 5
+  rotationSpeed: 10
   jumpHeight: 2
   gravity: -9.81
   canMoveWhileAttacking: 0
   hitboxes: {fileID: 0}
-  enemyHealth: {fileID: 0}
   playerId: 1
 --- !u!65 &1950347941441648000
 BoxCollider:
@@ -229,5 +228,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15a35a54c8711e74886f357a140e9689, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
+  owner: {fileID: -4947817433721442783}
   maxHealth: 100
   currentHealth: 100

@@ -71,6 +71,9 @@ PrefabInstance:
       addedObject: {fileID: -4947817433721442783}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       insertIndex: -1
+      addedObject: {fileID: -3670624254752083032}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1950347941441648000}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98aae7ad2f812294caa983016687908f, type: 3}
       insertIndex: -1
@@ -155,9 +158,22 @@ MonoBehaviour:
   rotationSpeed: 10
   jumpHeight: 2
   gravity: -9.81
+  knockbackDamping: 5
+  playerId: 2
+--- !u!114 &-3670624254752083032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7958380144892318547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5639703b7e05b94fbba0933775c91fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
   canMoveWhileAttacking: 0
   hitboxes: {fileID: 0}
-  playerId: 2
 --- !u!65 &1950347941441648000
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -212,7 +228,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5551876e58258a64884269e250071f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hitbox
-  owner: {fileID: -4947817433721442783}
+  movementOwner: {fileID: -4947817433721442783}
+  combatOwner: {fileID: -3670624254752083032}
   armCollider: {fileID: 1950347941441648000}
   legCollider: {fileID: 4084849331967017418}
   damage: 10

@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     [Header("Spawn")]
     public Transform spawnP1;
     public Transform spawnP2;
-    public OrbitalCamera cam;
+    public DualCameraFollow cam;
 
     private GameObject player1;
     private GameObject player2;
@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
         model1.transform.SetParent(player1.transform);
         model1.transform.localPosition = Vector3.zero;
         model1.transform.localRotation = Quaternion.identity;
+        model1.tag = "Player1";
         player1.tag = "Player1";
 
         // =========================
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
         player2.transform.rotation = spawnP2.rotation;
 
         GameObject model2 = Instantiate(playerPrefabs[GameData.Player2Character]);
+        model2.tag = "Player2";
         model2.transform.SetParent(player2.transform);
         model2.transform.localPosition = Vector3.zero;
         model2.transform.localRotation = Quaternion.identity;
@@ -77,14 +79,14 @@ public class GameManager : MonoBehaviour
         // =========================
         // Hitboxes
         // =========================
-        PC pc1 = player1.GetComponentInChildren<PC>();
-        PC pc2 = player2.GetComponentInChildren<PC>();
+        PlayerMovement PlayerMovement1 = player1.GetComponentInChildren<PlayerMovement>();
+        PlayerMovement PlayerMovement2 = player2.GetComponentInChildren<PlayerMovement>();
 
         Hitbox hb1 = player1.GetComponentInChildren<Hitbox>();
         Hitbox hb2 = player2.GetComponentInChildren<Hitbox>();
 
-        hb1.SetOwner(pc1);
-        hb2.SetOwner(pc2);
+        hb1.SetOwner(PlayerMovement1);
+        hb2.SetOwner(PlayerMovement2);
 
         // =========================
         // Camara
@@ -96,18 +98,18 @@ public class GameManager : MonoBehaviour
     // =========================
     // Fin del combate
     // =========================
-    private void OnPlayerDeath(PC deadPlayer)
+    private void OnPlayerDeath(PlayerMovement deadPlayer)
     {
         // Determinar quién ganó
-        string winner = (deadPlayer.gameObject.name == "Player1") ? "Player 2" : "Player 1";
+        string winner = (!deadPlayer.gameObject.tag.Equals("Player2") ? "Player 2" : "Player 1");
 
         // Mostrar panel Game Over
         gameOverPanel.SetActive(true);
         winnerText.text = $"{winner} ganó el combate!";
 
         // Desactivar controles de ambos jugadores
-        player1.GetComponentInChildren<PC>().enabled = false;
-        player2.GetComponentInChildren<PC>().enabled = false;
+        player1.GetComponentInChildren<PlayerMovement>().enabled = false;
+        player2.GetComponentInChildren<PlayerMovement>().enabled = false;
 
         // Desactivar hitboxes
         player1.GetComponentInChildren<Hitbox>().DisableAll();
@@ -128,8 +130,10 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
+      
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
+        player1.transform.position = spawnP1.position;
+        player2.transform.position = spawnP2.position;  }
 
     public void QuitToMenu()
     {

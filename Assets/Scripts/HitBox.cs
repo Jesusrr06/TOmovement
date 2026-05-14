@@ -1,10 +1,10 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Hitbox : MonoBehaviour
 {
     [Header("Owner")]
-    public PC owner;
+    public PlayerMovement movementOwner;
+    public PlayerCombat combatOwner;
 
     [Header("Colliders")]
     public Collider armCollider;
@@ -18,22 +18,26 @@ public class Hitbox : MonoBehaviour
 
     private void Awake()
     {
-        if (owner is null)
-            owner = GetComponentInParent<PC>();
+        if (movementOwner is null)
+            movementOwner = GetComponentInParent<PlayerMovement>();
+
+        if (combatOwner is null)
+            combatOwner = GetComponentInParent<PlayerCombat>();
 
         DisableAll();
     }
 
-    public void SetOwner(PC p)
+    // ================= OWNER =================
+    public void SetOwner(PlayerMovement p)
     {
-        owner = p;
+        movementOwner = p;
     }
 
+    // ================= ATTACK =================
     public void BeginAttack()
     {
         _hasHitThisAttack = false;
         _isAttacking = true;
-        // Debug para indicar qué tecla activó el ataque
     }
 
     public void EndAttack()
@@ -41,29 +45,84 @@ public class Hitbox : MonoBehaviour
         _isAttacking = false;
     }
 
+    // ================= HIT DETECTION =================
     private void OnTriggerEnter(Collider other)
     {
-        if (!_isAttacking || _hasHitThisAttack) return;
+        if (!_isAttacking || _hasHitThisAttack)
+            return;
 
-        if (other.transform.IsChildOf(owner.transform)) return;
+        // evitar golpearse a sí mismo
+        if (other.transform.IsChildOf(movementOwner.transform))
+            return;
 
-        PC target = other.GetComponentInParent<PC>();
-        if (target is null) return;
+        PlayerMovement targetMovement =
+            other.GetComponentInParent<PlayerMovement>();
 
-        Health hp = target.GetComponentInChildren<Health>();
+        if (targetMovement is null)
+            return;
+
+        PlayerCombat targetCombat =
+            other.GetComponentInParent<PlayerCombat>();
+
+        if (targetCombat is null)
+            return;
+
+        _hasHitThisAttack = true;
+
+        float finalDamage = damage;
+
+        // ================= BLOCK =================
+        if (targetCombat.IsBlocking)
+        {
+            finalDamage *= 0.3f;
+            Debug.Log($"{targetCombat.name} bloqueó el ataque!");
+        }
+
+        // ================= DAMAGE =================
+        Health hp = targetMovement.GetComponentInChildren<Health>();
+
         if (hp is not null)
         {
-            _hasHitThisAttack = true;
-            hp.TakeDamage(damage);
-            Debug.Log($"{owner.name} hit {target.name} for {damage} damage");
+            hp.TakeDamage(finalDamage);
         }
+
+        Debug.Log($"{movementOwner.name} hit {targetMovement.name} for {finalDamage} damage");
     }
 
-    // = Habilitar/Deshabilitar colliders =
-    public void EnableArm() { if (armCollider is not null) armCollider.enabled = true; }
-    public void DisableArm() { if (armCollider is not null) armCollider.enabled = false; }
-    public void EnableLeg() { if (legCollider is not null) legCollider.enabled = true; }
-    public void DisableLeg() { if (legCollider is not null) legCollider.enabled = false; }
-    public void EnableAll() { EnableArm(); EnableLeg(); }
-    public void DisableAll() { DisableArm(); DisableLeg(); }
+    // ================= COLLIDERS =================
+    public void EnableArm()
+    {
+        if (armCollider is not null)
+            armCollider.enabled = true;
+    }
+
+    public void DisableArm()
+    {
+        if (armCollider is not null)
+            armCollider.enabled = false;
+    }
+
+    public void EnableLeg()
+    {
+        if (legCollider is not null)
+            legCollider.enabled = true;
+    }
+
+    public void DisableLeg()
+    {
+        if (legCollider is not null)
+            legCollider.enabled = false;
+    }
+
+    public void EnableAll()
+    {
+        EnableArm();
+        EnableLeg();
+    }
+
+    public void DisableAll()
+    {
+        DisableArm();
+        DisableLeg();
+    }
 }

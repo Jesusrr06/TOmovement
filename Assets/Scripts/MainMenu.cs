@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,9 +7,11 @@ public class MainMenu : MonoBehaviour
     [Header("Panels")]
     public GameObject mainMenuPanel;     // Panel principal con botones Play / Quit / Opciones
     public GameObject optionsPanel;      // Otro panel de opciones, por ejemplo
+public TextMeshProUGUI errorText;
     public void Start()
     {
         mainMenuPanel.SetActive(true);
+        
         optionsPanel.SetActive(false);
     }
     
@@ -37,8 +40,9 @@ public class MainMenu : MonoBehaviour
     // =========================
     // Mostrar panel de opciones
     // =========================
-    public void ShowOptionsPanel()
+    public void ShowLoginPanel()
     {
+        Debug.Log("BOTON FUNCIONA");
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(true);
     }

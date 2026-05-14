@@ -3,8 +3,8 @@ using System;
 
 public class Health : MonoBehaviour
 {
-    public event Action<PC> OnDeath; // "PC" es el jugador que murió
-    public PC owner; // El jugador dueño de esta Health
+    public event Action<PlayerMovement> OnDeath; // "PC" es el jugador que murió
+    public PlayerMovement owner; // El jugador dueño de esta Health
 
     public float maxHealth = 100f;
     public float currentHealth;

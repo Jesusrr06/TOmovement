@@ -24,7 +24,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _moveDirection;
     private Vector2 _moveInput;
     private float _verticalVelocity;
-public  int playerId;
+
+    public  int playerId;
     public bool IsGrounded => _characterController.isGrounded;
 
     private void Awake()
@@ -34,14 +35,46 @@ public  int playerId;
     }
 
     private void Update()
-    {
+    {      
+        HandleGravity(); 
+        HandlePlayerInput();
         HandleMovement();
         HandleRotation();
-        HandleGravity();
     }
 
     // ================= INPUT FROM CONTROLLER =================
-    public void SetInput(Vector2 input)
+    private void HandlePlayerInput()
+    {
+        Vector2 input = Vector2.zero;
+
+        // PLAYER 1
+        if (playerId == 1)
+        {
+            if (Input.GetKey(KeyCode.W)) input.y += 1;
+            if (Input.GetKey(KeyCode.S)) input.y -= 1;
+            if (Input.GetKey(KeyCode.A)) input.x -= 1;
+            if (Input.GetKey(KeyCode.D)) input.x += 1;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                Jump();
+        }
+
+        // PLAYER 2
+        if (playerId == 2)
+        {
+            if (Input.GetKey(KeyCode.UpArrow)) input.y += 1;
+            if (Input.GetKey(KeyCode.DownArrow)) input.y -= 1;
+            if (Input.GetKey(KeyCode.LeftArrow)) input.x -= 1;
+            if (Input.GetKey(KeyCode.RightArrow)) input.x += 1;
+
+            if (Input.GetKeyDown(KeyCode.Keypad0))
+                Jump();
+        }
+
+        SetInput(input.normalized);
+    }
+
+    private void SetInput(Vector2 input)
     {
         if (_isStunned)
         {
@@ -51,6 +84,7 @@ public  int playerId;
 
         _moveInput = input;
     }
+    
 
     // ================= MOVEMENT =================
     private void HandleMovement()

@@ -16,6 +16,7 @@ public class PlayerCombat : MonoBehaviour
     private bool _isShooting;
     private bool _isBlocking;
     private bool _isStunned;
+    public  int playerId;
 
     // ================= GETTERS =================
     public bool IsBlocking => _isBlocking;
@@ -25,7 +26,36 @@ public class PlayerCombat : MonoBehaviour
         _animator = GetComponent<Animator>();
         FindHitbox();
     }
+    private void HandlePlayerInput()
+    {
+        Vector2 input = Vector2.zero;
 
+        // PLAYER 1
+        if (playerId == 1)
+        {
+            if (Input.GetKey(KeyCode.W)) input.y += 1;
+            if (Input.GetKey(KeyCode.S)) input.y -= 1;
+            if (Input.GetKey(KeyCode.A)) input.x -= 1;
+            if (Input.GetKey(KeyCode.D)) input.x += 1;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                Jump();
+        }
+
+        // PLAYER 2
+        if (playerId == 2)
+        {
+            if (Input.GetKey(KeyCode.UpArrow)) input.y += 1;
+            if (Input.GetKey(KeyCode.DownArrow)) input.y -= 1;
+            if (Input.GetKey(KeyCode.LeftArrow)) input.x -= 1;
+            if (Input.GetKey(KeyCode.RightArrow)) input.x += 1;
+
+            if (Input.GetKeyDown(KeyCode.Keypad0))
+                Jump();
+        }
+
+        SetInput(input.normalized);
+    }
     // ================= PUNCH =================
     public void Punch()
     {

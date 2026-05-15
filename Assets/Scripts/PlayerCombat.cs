@@ -1,10 +1,9 @@
+using System;
 using UnityEngine;
 using System.Collections;
 
 public class PlayerCombat : MonoBehaviour
 {
-    [Header("Combat Settings")]
-    [SerializeField] private bool canMoveWhileAttacking = false;
 
     [Header("Hitboxes")]
     public Hitbox hitboxes;
@@ -15,51 +14,67 @@ public class PlayerCombat : MonoBehaviour
     private bool _isKicking;
     private bool _isShooting;
     private bool _isBlocking;
-    private bool _isStunned;
+    private PlayerMovement _movementOwner;
+    private bool _isInEndLag;
     public  int playerId;
 
     // ================= GETTERS =================
     public bool IsBlocking => _isBlocking;
 
     private void Awake()
-    {
+    {         _movementOwner = GetComponent<PlayerMovement>();
+
         _animator = GetComponent<Animator>();
         FindHitbox();
     }
+
+    private void Update()
+    {
+        HandlePlayerInput();
+        HandleAnimations();
+        
+    }
+    private void HandleAnimations()
+    {
+        _animator.SetBool("IsBlocking", _isBlocking);
+
+        _animator.SetBool("IsStunned", _movementOwner.isStunned);
+    }
+
     private void HandlePlayerInput()
     {
-        Vector2 input = Vector2.zero;
+        if (_movementOwner.isStunned)
+        {
+            SetBlock(false);
+            return;
+        }
 
         // PLAYER 1
         if (playerId == 1)
         {
-            if (Input.GetKey(KeyCode.W)) input.y += 1;
-            if (Input.GetKey(KeyCode.S)) input.y -= 1;
-            if (Input.GetKey(KeyCode.A)) input.x -= 1;
-            if (Input.GetKey(KeyCode.D)) input.x += 1;
 
-            if (Input.GetKeyDown(KeyCode.Space))
-                Jump();
+            if (Input.GetKey(KeyCode.F)) Punch();
+            if (Input.GetKey(KeyCode.G)) Kick();
+            if (Input.GetKey(KeyCode.H)) Shoot();
+            SetBlock(Input.GetKey(KeyCode.E));
         }
 
         // PLAYER 2
         if (playerId == 2)
         {
-            if (Input.GetKey(KeyCode.UpArrow)) input.y += 1;
-            if (Input.GetKey(KeyCode.DownArrow)) input.y -= 1;
-            if (Input.GetKey(KeyCode.LeftArrow)) input.x -= 1;
-            if (Input.GetKey(KeyCode.RightArrow)) input.x += 1;
-
-            if (Input.GetKeyDown(KeyCode.Keypad0))
-                Jump();
+            if (Input.GetKey(KeyCode.Keypad1)) Punch();
+            if (Input.GetKey(KeyCode.Keypad2)) Kick();
+            if (Input.GetKey(KeyCode.Keypad3)) Shoot();
+            SetBlock(Input.GetKey(KeyCode.Keypad4));
         }
 
-        SetInput(input.normalized);
     }
+    
+
     // ================= PUNCH =================
-    public void Punch()
+    private void Punch()
     {
-        if (_isStunned || _isBlocking) return;
+        if ( _isBlocking) return;
 
         _isPunching = true;
         _animator.SetTrigger("IsPunching");
@@ -74,16 +89,16 @@ public class PlayerCombat : MonoBehaviour
 
         hitboxes.EnableArm();
 
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.15f);
 
         hitboxes.DisableArm();
         _isPunching = false;
     }
 
     // ================= KICK =================
-    public void Kick()
+    private void Kick()
     {
-        if (_isStunned || _isBlocking) return;
+        if (_isBlocking) return;
 
         _isKicking = true;
         _animator.SetTrigger("IsKicking");
@@ -98,16 +113,16 @@ public class PlayerCombat : MonoBehaviour
 
         hitboxes.EnableLeg();
 
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.17f);
 
         hitboxes.DisableLeg();
         _isKicking = false;
     }
 
     // ================= SHOOT =================
-    public void Shoot()
+    private void Shoot()
     {
-        if (_isStunned || _isBlocking) return;
+        if (_isBlocking) return;
 
         _isShooting = true;
         _animator.SetTrigger("IsShooting");
@@ -117,32 +132,19 @@ public class PlayerCombat : MonoBehaviour
 
     private IEnumerator ResetShoot()
     {
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.15f);
         _isShooting = false;
     }
 
     // ================= BLOCK =================
-    public void SetBlock(bool state)
+    private void SetBlock(bool state)
     {
         if (_isPunching || _isKicking || _isShooting)
             state = false;
 
         _isBlocking = state;
     }
-
-    // ================= STUN =================
-    public void SetStunned(bool state)
-    {
-        _isStunned = state;
-
-        if (state)
-        {
-            _isBlocking = false;
-            _isPunching = false;
-            _isKicking = false;
-            _isShooting = false;
-        }
-    }
+    
 
     // ================= HITBOX =================
     private void FindHitbox()
@@ -151,7 +153,7 @@ public class PlayerCombat : MonoBehaviour
 
         foreach (Hitbox hb in hitboxesArray)
         {
-            if (hb.armCollider != null || hb.legCollider != null)
+            if (hb.armCollider is not null || hb.legCollider is not null)
             {
                 hitboxes = hb;
 

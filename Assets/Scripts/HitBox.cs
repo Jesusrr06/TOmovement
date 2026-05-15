@@ -57,14 +57,10 @@ public class Hitbox : MonoBehaviour
 
         PlayerMovement targetMovement =
             other.GetComponentInParent<PlayerMovement>();
-
-        if (targetMovement is null)
-            return;
-
         PlayerCombat targetCombat =
             other.GetComponentInParent<PlayerCombat>();
 
-        if (targetCombat is null)
+        if (targetCombat is null || targetMovement is null)
             return;
 
         _hasHitThisAttack = true;
@@ -75,9 +71,13 @@ public class Hitbox : MonoBehaviour
         if (targetCombat.IsBlocking)
         {
             finalDamage *= 0.3f;
-            Debug.Log($"{targetCombat.name} bloqueó el ataque!");
-        }
 
+            targetMovement.ApplyStun(0.2f, PlayerMovement.StunType.Blockstun);
+
+            Debug.Log($"{targetCombat.name} BLOCKED!");
+        }
+        targetMovement.ApplyStun(2f, PlayerMovement.StunType.Hitstun);
+     
         // ================= DAMAGE =================
         Health hp = targetMovement.GetComponentInChildren<Health>();
 

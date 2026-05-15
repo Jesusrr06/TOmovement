@@ -158,6 +158,7 @@ MonoBehaviour:
   rotationSpeed: 10
   jumpHeight: 2
   gravity: -9.81
+  isStunned: 0
   knockbackDamping: 5
   playerId: 1
 --- !u!114 &-3338026884284437349
@@ -172,8 +173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5639703b7e05b94fbba0933775c91fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
-  canMoveWhileAttacking: 0
   hitboxes: {fileID: 0}
+  playerId: 1
 --- !u!65 &1950347941441648000
 BoxCollider:
   m_ObjectHideFlags: 0

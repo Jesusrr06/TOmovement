@@ -713,7 +713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBar
   fillImage: {fileID: 856191776}
-  target: {fileID: -8271846971700539061, guid: d4d81c1ebe63bfb458620a7efa42453b, type: 3}
+  target: {fileID: -2986725429931929934, guid: 530d0a9462eea90478a72c9bd53737df, type: 3}
 --- !u!1 &873858840
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,8 +908,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   playerPrefabs:
-  - {fileID: 7958380144892318547, guid: 456987b2dbce14741bfc17106f8b7d85, type: 3}
-  - {fileID: 7958380144892318547, guid: d4d81c1ebe63bfb458620a7efa42453b, type: 3}
+  - {fileID: 665898128574441555, guid: 26035d5e91882e14d8ad494882a46dbc, type: 3}
+  - {fileID: 665898128574441555, guid: 530d0a9462eea90478a72c9bd53737df, type: 3}
   healthBarP1: {fileID: 1038299616}
   healthBarP2: {fileID: 856191778}
   gameOverPanel: {fileID: 1035296656}
@@ -1236,7 +1236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBar
   fillImage: {fileID: 1038299614}
-  target: {fileID: 2731349911477244955, guid: 456987b2dbce14741bfc17106f8b7d85, type: 3}
+  target: {fileID: -2986725429931929934, guid: 26035d5e91882e14d8ad494882a46dbc, type: 3}
 --- !u!1 &1444464488
 GameObject:
   m_ObjectHideFlags: 0

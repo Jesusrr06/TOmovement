@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Serialization;
 
+/// <summary>
+/// Handles player movement: walking, rotation, jumping, gravity and stun state.
+/// Also exposes grounded checks and animation state updates.
+/// </summary>
 public class PlayerMovement : MonoBehaviour
 {
     private CharacterController _characterController;
@@ -30,15 +34,34 @@ public class PlayerMovement : MonoBehaviour
     public  int playerId;
     public bool IsGrounded => _characterController.isGrounded;
 
+    /// <summary>
+    /// Initialize component references: CharacterController, Camera and Animator.
+    /// Also enables the CharacterController if found so movement works on spawn.
+    /// </summary>
     private void Awake()
     {
-        _characterController = GetComponent<CharacterController>();
+        Debug.Log($"{gameObject.name} ACTIVE: {gameObject.activeInHierarchy}");
+        _characterController = GetComponentInChildren<CharacterController>();
+
+        if (_characterController == null)
+        {
+            Debug.LogError("No CharacterController found on " + gameObject.name);
+        }
+        else
+        {
+            Debug.Log($"CC enabled: {_characterController.enabled}");
+            _characterController.enabled = true;
+        }
         _cam = Camera.main;
         _animator = GetComponent<Animator>();
     }
 
+    /// <summary>
+    /// Per-frame update: gravity, input, movement, rotation and animation handling.
+    /// </summary>
     private void Update()
     {      
+     
         HandleGravity(); 
         HandlePlayerInput();
         HandleMovement();
@@ -47,8 +70,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // ================= INPUT FROM CONTROLLER =================
+    /// <summary>
+    /// Reads keyboard input for the current playerId and converts it into a normalized move vector.
+    /// Ignores input while stunned or if the CharacterController is missing/disabled.
+    /// </summary>
     private void HandlePlayerInput()
-    {            Vector2 input = Vector2.zero;
+    {           if (_characterController is null || !_characterController.enabled)
+                         return;    Vector2 input = Vector2.zero;
 
      
  
@@ -81,6 +109,10 @@ public class PlayerMovement : MonoBehaviour
         SetInput(input.normalized);
     }
 
+    /// <summary>
+    /// Applies processed input to the movement state. Clears input while stunned.
+    /// </summary>
+    /// <param name="input">Normalized 2D input vector (x:right, y:forward)</param>
     private void SetInput(Vector2 input)
     {
         if (isStunned)
@@ -94,6 +126,10 @@ public class PlayerMovement : MonoBehaviour
     
 
     // ================= MOVEMENT =================
+    /// <summary>
+    /// Converts the current 2D input into a 3D movement vector relative to the camera,
+    /// applies gravity/vertical velocity and moves the CharacterController.
+    /// </summary>
     private void HandleMovement()
     {
         if (isStunned)
@@ -122,6 +158,9 @@ public class PlayerMovement : MonoBehaviour
 
         _characterController.Move(_moveDirection * Time.deltaTime);    }
 
+    /// <summary>
+    /// Smoothly rotates the player towards movement direction when moving.
+    /// </summary>
     private void HandleRotation()
     {
         Vector3 horizontal = _moveDirection;
@@ -139,6 +178,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Applies simple gravity integration and keeps the vertical velocity clamped while grounded.
+    /// </summary>
     private void HandleGravity()
     {
         if (_characterController.isGrounded && _verticalVelocity < 0)
@@ -148,6 +190,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // ================= ACTIONS =================
+    /// <summary>
+    /// Initiates a jump by setting the vertical velocity using the configured jump height.
+    /// Will not jump while stunned or when not grounded.
+    /// </summary>
     private void Jump()
     {
         if (isStunned || !_characterController.isGrounded) return;
@@ -157,12 +203,22 @@ public class PlayerMovement : MonoBehaviour
 
     // ================= EXTERNAL EFFECTS =================
    
+    /// <summary>
+    /// Public API to apply a stun effect to this player. Stops movement for the duration.
+    /// </summary>
+    /// <param name="duration">Duration of the stun in seconds.</param>
+    /// <param name="type">Type of stun (Hitstun or Blockstun) — can be used to vary behavior.</param>
     public void ApplyStun(float duration, StunType type)
     {
         StopCoroutine(nameof(StunRoutine));
         StartCoroutine(StunRoutine(duration, type));
     }
 
+    /// <summary>
+    /// Coroutine that toggles the isStunned flag for the given duration.
+    /// Different stun types may be applied to change timing or allowed actions while stunned.
+    /// </summary>
+    /// <returns>IEnumerator used by StartCoroutine.</returns>
     private IEnumerator StunRoutine(float duration, StunType type)
     {
         if (type == StunType.Hitstun)
@@ -183,6 +239,9 @@ public class PlayerMovement : MonoBehaviour
             isStunned = false;
         }
     }
+    /// <summary>
+    /// Updates animator parameters based on movement state (running, jumping, falling, stunned).
+    /// </summary>
     private void HandleAnimations()
     {
         Vector3 horizontal = _moveDirection;
@@ -190,11 +249,11 @@ public class PlayerMovement : MonoBehaviour
         float speed = horizontal.magnitude;
 
 
-        bool isRunning = speed > 0.1f;
+        bool isRunning = speed > 0.1f && _characterController.isGrounded;
         bool isJumping = !_characterController.isGrounded && _verticalVelocity > 0.1f;
         bool isFalling = !_characterController.isGrounded && _verticalVelocity < -0.1f;
 
-        _animator.SetBool("IsRunning", isRunning && !isStunned);
+        _animator.SetBool("IsRunning", isRunning && !isStunned );
         _animator.SetBool("IsJumping", isJumping);
         _animator.SetBool("IsFalling", isFalling);
         _animator.SetBool("IsStunned", isStunned);

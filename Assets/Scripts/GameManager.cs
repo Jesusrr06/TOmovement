@@ -1,63 +1,64 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Spawns players, wires UI and camera, and handles round end / restart logic.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     [Header("Players")]
     public GameObject[] playerPrefabs;
-    
+
     [Header("UI")]
     public HealthBar healthBarP1;
     public HealthBar healthBarP2;
-    public GameObject gameOverPanel; // Panel con botones Jugar otra vez / Salir al menú
-     public TextMeshProUGUI  winnerText;
+    public GameObject gameOverPanel;
+    public TextMeshProUGUI winnerText;
 
     [Header("Spawn")]
     public Transform spawnP1;
     public Transform spawnP2;
     public DualCameraFollow cam;
 
-    private GameObject player1;
-    private GameObject player2;
+    private GameObject _player1;
+    private GameObject _player2;
 
     void Start()
     {
-        gameOverPanel.SetActive(false); // Oculta el panel al inicio
+        gameOverPanel.SetActive(false);
         StartCoroutine(SpawnPlayers());
     }
 
-    IEnumerator SpawnPlayers()
+    /// <summary>
+    /// Instantiates player root GameObjects, attaches character models, wires Health and UI,
+    /// and assigns camera targets. Runs as a coroutine to allow frames for prefab initialization.
+    /// </summary>
+    private   IEnumerator SpawnPlayers()
     {
-        // =========================
-        // PLAYER 1
-        // =========================
-        player1 = new GameObject("Player1");
-        player1.transform.position = spawnP1.position;
-        player1.transform.rotation = spawnP1.rotation;
+         _player1 = new GameObject("Player1");
+        _player1.transform.position = spawnP1.position;
+        _player1.transform.rotation = spawnP1.rotation;
 
-        GameObject model1 = Instantiate(playerPrefabs[GameData.Player1Character]);
-        model1.transform.SetParent(player1.transform);
+        GameObject model1 = Instantiate(playerPrefabs[GameData.Player1Character], _player1.transform, true);
         model1.transform.localPosition = Vector3.zero;
         model1.transform.localRotation = Quaternion.identity;
         model1.tag = "Player1";
-        player1.tag = "Player1";
+        _player1.tag = "Player1";
 
         // =========================
         // PLAYER 2
         // =========================
-        player2 = new GameObject("Player2");
-        player2.transform.position = spawnP2.position;
-        player2.transform.rotation = spawnP2.rotation;
+        _player2 = new GameObject("Player2");
+        _player2.transform.position = spawnP2.position;
+        _player2.transform.rotation = spawnP2.rotation;
 
-        GameObject model2 = Instantiate(playerPrefabs[GameData.Player2Character]);
+        GameObject model2 = Instantiate(playerPrefabs[GameData.Player2Character], _player2.transform, true);
         model2.tag = "Player2";
-        model2.transform.SetParent(player2.transform);
         model2.transform.localPosition = Vector3.zero;
         model2.transform.localRotation = Quaternion.identity;
-        player2.tag = "Player2";
+        _player2.tag = "Player2";
 
         yield return null;
         WaitForSeconds wait = new WaitForSeconds(0.2f);
@@ -65,8 +66,8 @@ public class GameManager : MonoBehaviour
         // =========================
         // Health
         // =========================
-        Health hp1 = player1.GetComponentInChildren<Health>();
-        Health hp2 = player2.GetComponentInChildren<Health>();
+        Health hp1 = _player1.GetComponentInChildren<Health>();
+        Health hp2 = _player2.GetComponentInChildren<Health>();
 
         // Conectar UI
         healthBarP1.SetTarget(hp1);
@@ -75,69 +76,47 @@ public class GameManager : MonoBehaviour
         // Suscribirse al evento de muerte
         hp1.OnDeath += OnPlayerDeath;
         hp2.OnDeath += OnPlayerDeath;
-
-        // =========================
-        // Hitboxes
-        // =========================
-        PlayerMovement PlayerMovement1 = player1.GetComponentInChildren<PlayerMovement>();
-        PlayerMovement PlayerMovement2 = player2.GetComponentInChildren<PlayerMovement>();
-
-        Hitbox hb1 = player1.GetComponentInChildren<Hitbox>();
-        Hitbox hb2 = player2.GetComponentInChildren<Hitbox>();
-
-        hb1.SetOwner(PlayerMovement1);
-        hb2.SetOwner(PlayerMovement2);
-
         // =========================
         // Camara
         // =========================
-        cam.player1 = player1.transform;
-        cam.player2 = player2.transform;
+        cam.player1 = _player1.transform;
+        cam.player2 = _player2.transform;
     }
+    
 
-    // =========================
-    // Fin del combate
-    // =========================
+    /// <summary>
+    /// Callback invoked when a player's Health fires OnDeath. Shows game over UI and freezes the game.
+    /// </summary>
+    /// <param name="deadPlayer">PlayerMovement of the dead player.</param>
     private void OnPlayerDeath(PlayerMovement deadPlayer)
     {
-        // Determinar quién ganó
-        string winner = (!deadPlayer.gameObject.tag.Equals("Player2") ? "Player 2" : "Player 1");
+        bool p1Died = deadPlayer == _player1.GetComponentInChildren<PlayerMovement>();
+        string winner = p1Died ? "Player 2" : "Player 1";
 
-        // Mostrar panel Game Over
         gameOverPanel.SetActive(true);
         winnerText.text = $"{winner} ganó el combate!";
 
-        // Desactivar controles de ambos jugadores
-        player1.GetComponentInChildren<PlayerMovement>().enabled = false;
-        player2.GetComponentInChildren<PlayerMovement>().enabled = false;
+        _player1.GetComponentInChildren<PlayerMovement>().enabled = false;
+        _player2.GetComponentInChildren<PlayerMovement>().enabled = false;
 
-        // Desactivar hitboxes
-        player1.GetComponentInChildren<Hitbox>().DisableAll();
-        player2.GetComponentInChildren<Hitbox>().DisableAll();
-      
-        
-
-        // Pausar tiempo si quieres animaciones
         Time.timeScale = 0f;
     }
-   
 
-    
-    // =========================
-    // Botones UI
-    // =========================
-    
+    /// <summary>
+    /// Restarts the current scene and resumes normal timescale.
+    /// </summary>
     public void RestartGame()
     {
         Time.timeScale = 1f;
-      
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        player1.transform.position = spawnP1.position;
-        player2.transform.position = spawnP2.position;  }
+    }
 
+    /// <summary>
+    /// Loads the main menu scene and resumes timescale.
+    /// </summary>
     public void QuitToMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu"); // Cambia por tu escena de menú
+        SceneManager.LoadScene("MainMenu");
     }
 }

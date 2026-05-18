@@ -418,9 +418,6 @@ PrefabInstance:
       addedObject: {fileID: -554050790264485579}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f052b01d0dbd8c04fb2c7536b76ebae1, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7772973889807482437}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f052b01d0dbd8c04fb2c7536b76ebae1, type: 3}
-      insertIndex: -1
       addedObject: {fileID: -2986725429931929934}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f052b01d0dbd8c04fb2c7536b76ebae1, type: 3}
       insertIndex: -1
@@ -519,25 +516,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5639703b7e05b94fbba0933775c91fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
-  hitboxes: {fileID: 0}
-  playerId: 0
---- !u!114 &7772973889807482437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 665898128574441555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5551876e58258a64884269e250071f66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Hitbox
-  movementOwner: {fileID: -2586500499407919571}
-  combatOwner: {fileID: -554050790264485579}
-  armCollider: {fileID: 4282465946838521356}
-  legCollider: {fileID: -7035899903497939413}
-  damage: 10
+  armHitbox: {fileID: 4282465946838521356}
+  legHitbox: {fileID: -7035899903497939413}
+  playerId: 1
 --- !u!114 &-2986725429931929934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -568,7 +549,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -589,7 +570,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

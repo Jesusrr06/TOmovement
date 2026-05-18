@@ -2,6 +2,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Controls main menu UI: start, quit and panel navigation.
+/// </summary>
 public class MainMenu : MonoBehaviour
 {
     [Header("Panels")]

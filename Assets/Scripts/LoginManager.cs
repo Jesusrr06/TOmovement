@@ -1,6 +1,10 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Simple login UI helper that reads input fields and displays messages.
+/// Placeholder for future authentication implementation (e.g., Firebase).
+/// </summary>
 public class LoginManager : MonoBehaviour
 {
     [Header("UI Elements")]

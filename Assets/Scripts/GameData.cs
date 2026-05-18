@@ -1,6 +1,8 @@
+/// <summary>
+/// Simple static container for selected character indices. Persisted per run.
+/// </summary>
 public static class GameData
 {
-    public static readonly int Player1Character=0;
-    public static readonly int Player2Character = 1
-        ;
+    public static int Player1Character;
+    public static int Player2Character;
 }

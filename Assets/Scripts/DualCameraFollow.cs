@@ -1,6 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Camera that follows two players: centers between them and adjusts zoom based on distance.
+/// </summary>
 public class DualCameraFollow : MonoBehaviour
 {
     public Transform player1;

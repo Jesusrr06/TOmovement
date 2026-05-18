@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Binds a UI fill image to a Health component and updates it when health changes.
+/// </summary>
 public class HealthBar : MonoBehaviour
 {
     public Image fillImage;

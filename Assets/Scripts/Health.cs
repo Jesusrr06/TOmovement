@@ -1,6 +1,10 @@
 using UnityEngine;
 using System;
 
+/// <summary>
+/// Tracks current and maximum health, exposes TakeDamage and death events.
+/// Notifies listeners when health changes and fires OnDeath when HP reaches zero.
+/// </summary>
 public class Health : MonoBehaviour
 {
     public event Action<PlayerMovement> OnDeath; // "PC" es el jugador que murió
@@ -23,6 +27,11 @@ public class Health : MonoBehaviour
         Debug.Log($"{gameObject.name} Start: OnHealthChanged invoked with {currentHealth / maxHealth}");
     }
 
+    /// <summary>
+    /// Reduces current health by damage, clamps to [0, maxHealth], and raises OnHealthChanged.
+    /// If health reaches zero, Die() is invoked and OnDeath is fired.
+    /// </summary>
+    /// <param name="damage">Amount of health to subtract.</param>
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
@@ -37,6 +46,9 @@ public class Health : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when health reaches zero. Fires OnDeath and stops the game time.
+    /// </summary>
     private void Die()
     {
         Debug.Log($"{gameObject.name} ha muerto.");

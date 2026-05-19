@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "599943558440",
+    "project_id": "tofight-be0d3",
+    "storage_bucket": "tofight-be0d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599943558440:android:9b8ab0ca695b2fd71a0c1d",
+        "android_client_info": {
+          "package_name": "Trying.out.Fighting"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2HYGQ6lVnT3VlNwykJTk35VBgI_GVgrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

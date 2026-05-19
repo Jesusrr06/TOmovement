@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6664933110672387037
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5690909047941301362}
+  m_Layer: 0
+  m_Name: Firepoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5690909047941301362
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6664933110672387037}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.01661, y: 1.261, z: 0.542}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9141320465454510023}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &8743395606091909164
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62,7 +93,10 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: ca907b9a08c2a3d40899c9de5ad93406, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7104cd5684618a742a5bb92157d145a7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5690909047941301362}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7104cd5684618a742a5bb92157d145a7, type: 3}
       insertIndex: -1
@@ -175,7 +209,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
   armHitbox: {fileID: 1349929231104400042}
   legHitbox: {fileID: -1791280592196966263}
+  proyectile: {fileID: 5236089491127568003, guid: 3a5d8de62bd57854a90bf633bed569bc, type: 3}
+  firePoint: {fileID: 5690909047941301362}
   hitboxActiveFrames: 3
+  knockbackForce: 5
+  knockbackDuration: 0.2
   playerId: 2
 --- !u!114 &-3029886843657838713
 MonoBehaviour:
@@ -234,3 +272,8 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.3590608, y: 0.5764757, z: 1.024092}
   m_Center: {x: 0.1349031, y: 0.5841716, z: 0.7159187}
+--- !u!4 &9141320465454510023 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7104cd5684618a742a5bb92157d145a7, type: 3}
+  m_PrefabInstance: {fileID: 8743395606091909164}
+  m_PrefabAsset: {fileID: 0}

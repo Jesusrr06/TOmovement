@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Manages combat input, attack windows and hit detection.
@@ -13,7 +14,8 @@ public class PlayerCombat : MonoBehaviour
 
     private Animator _animator;
     private PlayerMovement _movementOwner;
-
+    [FormerlySerializedAs("_proyectile")] public  GameObject proyectile;
+    [SerializeField] private Transform firePoint;
     [Header("Auto-disable (frames)")]
     [Tooltip("Number of frames to keep colliders enabled when activated from this class")]
     public int hitboxActiveFrames = 3;
@@ -25,6 +27,13 @@ public class PlayerCombat : MonoBehaviour
     private bool _isBlocking;
     private bool _isInEndLag;
     private bool _alreadyHit;
+    private bool _ignoreHits;
+    // timestamp when this player started the current attack (Time.time)
+    private float _attackStartTime = -100f;
+
+    [Header("Hit Effects")]
+    public float knockbackForce = 5f;
+    public float knockbackDuration = 0.2f;
 
     [Header("Player")]
     public int playerId;
@@ -174,9 +183,10 @@ public class PlayerCombat : MonoBehaviour
         if (!CanAttack())
             return;
 
+        _attackStartTime = Time.time;
         _isPunching = true;
         _isInEndLag = true;
-        _animator.SetTrigger("IsPunching");
+        if (_animator != null) _animator.SetTrigger("IsPunching");
 
         StartCoroutine(PunchRoutine());
     }
@@ -194,14 +204,13 @@ public class PlayerCombat : MonoBehaviour
         if (armHitbox != null)
         {
             StartCoroutine(EnableColliderForFrames(armHitbox, hitboxActiveFrames));
-            TryDetectHit(armHitbox);
         }
 
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.18f);
 
         _isPunching = false;
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.6f);
 
         _isInEndLag = false;
     }
@@ -216,9 +225,10 @@ public class PlayerCombat : MonoBehaviour
         if (!CanAttack())
             return;
 
+        _attackStartTime = Time.time;
         _isKicking = true;
         _isInEndLag = true;
-        _animator.SetTrigger("IsKicking");
+        if (_animator != null) _animator.SetTrigger("IsKicking");
 
         StartCoroutine(KickRoutine());
     }
@@ -236,14 +246,13 @@ public class PlayerCombat : MonoBehaviour
         if (legHitbox != null)
         {
             StartCoroutine(EnableColliderForFrames(legHitbox, hitboxActiveFrames));
-            TryDetectHit(legHitbox);
         }
 
-        yield return new WaitForSeconds(0.17f);
+        yield return new WaitForSeconds(0.2f);
 
         _isKicking = false;
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.5f);
 
         _isInEndLag = false;
     }
@@ -258,9 +267,12 @@ public class PlayerCombat : MonoBehaviour
         if (!CanAttack())
             return;
 
+        _attackStartTime = Time.time;
+        
         _isShooting = true;
         _isInEndLag = true;
-        _animator.SetTrigger("IsShooting");
+        Instantiate(proyectile, firePoint.position, firePoint.rotation);
+        if (_animator != null) _animator.SetTrigger("IsShooting");
 
         StartCoroutine(ShootRoutine());
     }
@@ -271,11 +283,11 @@ public class PlayerCombat : MonoBehaviour
     /// <returns>IEnumerator for StartCoroutine.</returns>
     private IEnumerator ShootRoutine()
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.35f);
 
         _isShooting = false;
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.6f);
 
         _isInEndLag = false;
     }
@@ -287,20 +299,12 @@ public class PlayerCombat : MonoBehaviour
     /// <param name="other">The other collider that entered the trigger.</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (_alreadyHit) return;
+        if (_alreadyHit || _ignoreHits) return;
 
         PlayerMovement target = other.GetComponentInParent<PlayerMovement>();
         if (target == null || target == _movementOwner) return;
 
-        _alreadyHit = true;
-
-        float finalDamage = 10f;
-        if (target.GetComponentInChildren<PlayerCombat>()?.IsBlocking == true)
-        {
-            finalDamage *= 0.3f; // reduced while holding block        }
-        else        {            target.ApplyStun(0.5f, PlayerMovement.StunType.Hitstun);        }
-        Health hp = target.GetComponentInChildren<Health>();
-        if (hp != null)        {            hp.TakeDamage(finalDamage);        }
+        ApplyHit(target);
     }
     // ================= BLOCK =================
 
@@ -332,7 +336,9 @@ public class PlayerCombat : MonoBehaviour
         _alreadyHit = false;
         col.enabled = true;
         for (int i = 0; i < Mathf.Max(1, frames); i++)
-            yield return new WaitForEndOfFrame();        col.enabled = false;    }
+            yield return new WaitForEndOfFrame();
+        col.enabled = false;
+    }
 
     /// <summary>
     /// Performs an immediate overlap check using the collider's bounds to detect hits
@@ -341,8 +347,93 @@ public class PlayerCombat : MonoBehaviour
     /// </summary>
     /// <param name="col">The attack collider used for overlap checks.</param>
     private void TryDetectHit(Collider col)
-    {        if (col == null) return;
-        Collider[] hits = Physics.OverlapBox(col.bounds.center, col.bounds.extents, col.transform.rotation);        foreach (var c in hits)        {            if (c.transform.root == transform.root) continue;            PlayerMovement target = c.GetComponentInParent<PlayerMovement>();            if (target == null || target == _movementOwner) continue;            if (_alreadyHit) continue;            _alreadyHit = true;            Health hp = target.GetComponentInChildren<Health>();            if (hp != null)            {                float finalDamage = 10f;
+    {
+        if (_ignoreHits || col == null) return;
+
+        // Delegate to the centralized overlap handler so behavior is consistent
+        ProcessOverlapHits(col);
+    }
+
+    private void ApplyHit(PlayerMovement target)
+    {
+        if (target == null || _alreadyHit || target == _movementOwner) return;
+
+        PlayerCombat targetCombat = target.GetComponentInChildren<PlayerCombat>();
+        // If target is simultaneously attacking and they started earlier, give priority to the earlier attack
+        if (targetCombat != null && targetCombat.IsAttacking)
+        {
+            if (targetCombat._attackStartTime < _attackStartTime)
+            {
+                // target's attack started earlier -> ignore this hit to avoid mutual-hit
+                return;
+            }
+        }
+
+        _alreadyHit = true;
+
+        float finalDamage = 10f;
+        bool targetBlocking = targetCombat != null && targetCombat.IsBlocking;
+        if (targetBlocking)
+        {
+            finalDamage *= 0.3f;
+        }
+        else
+        {
+            target.ApplyStun(0.5f, PlayerMovement.StunType.Hitstun);
+        }
+
+        Health hp = target.GetComponentInChildren<Health>();
+        if (hp != null)
+        {
+            hp.TakeDamage(finalDamage);
+            Debug.Log($"{gameObject.name} hit {target.name} for {finalDamage}");
+        }
+
+        // Apply knockback to target
+        PlayerMovement mover = target.GetComponent<PlayerMovement>();
+        if (mover != null)
+        {
+            Vector3 dir = (target.transform.position - transform.position).normalized;
+            mover.ApplyKnockback(dir * knockbackForce, knockbackDuration);
+        }
+
+        // Temporarily disable the target's hit detection so simultaneous collisions don't cause mutual hits
+        if (targetCombat != null)
+        {
+            targetCombat.StartCoroutine(targetCombat.DisableHitsForSeconds(0.05f));
+        }
+    }
+
+    private IEnumerator DisableHitsForSeconds(float seconds)
+    {
+        _ignoreHits = true;
+        yield return new WaitForSeconds(seconds);
+        _ignoreHits = false;
+    }
+
+    private void OnDisable()
+    {
+        // ensure colliders are off when object is disabled/destroyed
+        if (armHitbox != null) armHitbox.enabled = false;
+        if (legHitbox != null) legHitbox.enabled = false;
+    }
+   
+    private void ProcessOverlapHits(Collider col){
+        if (col == null) return;
+
+        Collider[] hits = Physics.OverlapBox(col.bounds.center, col.bounds.extents, col.transform.rotation);
+        foreach (var c in hits)
+        {
+            if (c.transform.root == transform.root) continue;
+            PlayerMovement target = c.GetComponentInParent<PlayerMovement>();
+            if (target == null || target == _movementOwner) continue;
+            if (_alreadyHit) continue;
+
+            _alreadyHit = true;
+            Health hp = target.GetComponentInChildren<Health>();
+            if (hp != null)
+            {
+                float finalDamage = 10f;
                 PlayerCombat targetCombat = target.GetComponentInChildren<PlayerCombat>();
                 if (targetCombat != null && targetCombat.IsBlocking)
                 {
@@ -353,5 +444,11 @@ public class PlayerCombat : MonoBehaviour
                     target.ApplyStun(0.5f, PlayerMovement.StunType.Hitstun);
                 }
                 hp.TakeDamage(finalDamage);
-                Debug.Log($"{gameObject.name} hit {target.name} for {finalDamage} (overlap)");                Debug.Log($"{gameObject.name} hit {target.name} for 10 (overlap)");            }            break;        }    }    private void OnDisable()    {        // ensure colliders are off when object is disabled/destroyed        if (armHitbox != null) armHitbox.enabled = false;        if (legHitbox != null) legHitbox.enabled = false;    }
+                Debug.Log($"{gameObject.name} hit {target.name} for {finalDamage} (overlap)");
+            }
+            break;
+        }
+    }
+
+  
 }

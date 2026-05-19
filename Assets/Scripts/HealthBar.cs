@@ -13,12 +13,16 @@ public class HealthBar : MonoBehaviour
     {
         if (target == null)
         {
-            Debug.LogError("HealthBar: target no asignado");
+            Debug.LogWarning($"HealthBar '{gameObject.name}' has no target assigned.");
             return;
         }
 
-        target.OnHealthChanged += UpdateBar;
+        if (fillImage == null)
+        {
+            Debug.LogWarning($"HealthBar '{gameObject.name}' has no fillImage assigned.");
+        }
 
+        target.OnHealthChanged += UpdateBar;
         UpdateBar(target.currentHealth / target.maxHealth);
     }
 
@@ -28,12 +32,21 @@ public class HealthBar : MonoBehaviour
     }
     public void SetTarget(Health h)
     {
-        target = h;
+        // unsubscribe previous
+        if (target != null)
+            target.OnHealthChanged -= UpdateBar;
+        target = h;
 
         if (target is not null)
         {
             target.OnHealthChanged += UpdateBar;
             UpdateBar(target.currentHealth / target.maxHealth);
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (target != null)
+            target.OnHealthChanged -= UpdateBar;
     }
 }

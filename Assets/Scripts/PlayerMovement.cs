@@ -28,7 +28,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private Vector3 _moveDirection;
-    private Vector2 _moveInput;
+    private Vector3 _externalVelocity;
+    private Coroutine _knockbackCoroutine;    private Vector2 _moveInput;
     private float _verticalVelocity;
     private Animator _animator;
     public  int playerId;
@@ -156,7 +157,10 @@ public class PlayerMovement : MonoBehaviour
 
         _moveDirection.y = _verticalVelocity;
 
-        _characterController.Move(_moveDirection * Time.deltaTime);    }
+        // Apply any external velocities such as knockback on top of player-controlled movement
+        Vector3 finalMove = _moveDirection + _externalVelocity;
+        _characterController.Move(finalMove * Time.deltaTime);
+    }
 
     /// <summary>
     /// Smoothly rotates the player towards movement direction when moving.
@@ -239,6 +243,33 @@ public class PlayerMovement : MonoBehaviour
             isStunned = false;
         }
     }
+
+    /// <summary>
+    /// Apply an external knockback velocity for a short duration. External velocity is added on top of regular movement.
+    /// </summary>
+    public void ApplyKnockback(Vector3 velocity, float duration)
+    {
+        Debug.Log($"ApplyKnockback called on {gameObject.name}: velocity={velocity}, duration={duration}");
+        if (_knockbackCoroutine != null)
+            StopCoroutine(_knockbackCoroutine);
+        _knockbackCoroutine = StartCoroutine(KnockbackRoutine(velocity, duration));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector3 velocity, float duration)
+    {
+        Debug.Log($"KnockbackRoutine start on {gameObject.name}: {velocity} for {duration}");
+        _externalVelocity = velocity;
+        float timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        _externalVelocity = Vector3.zero;
+        _knockbackCoroutine = null;
+        Debug.Log($"KnockbackRoutine end on {gameObject.name}");
+    }
+
     /// <summary>
     /// Updates animator parameters based on movement state (running, jumping, falling, stunned).
     /// </summary>

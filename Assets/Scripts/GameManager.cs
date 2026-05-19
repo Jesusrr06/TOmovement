@@ -43,7 +43,6 @@ public class GameManager : MonoBehaviour
          _player1 = new GameObject("Player1");
         _player1.transform.position = spawnP1.position;
         _player1.transform.rotation = spawnP1.rotation;
-        int num=0;
         if (GameData.Player1Character < 0 || GameData.Player1Character > 1)
         {
             GameData.Player1Character = Random.Range(0, 2);

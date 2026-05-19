@@ -26,7 +26,7 @@ public TextMeshProUGUI errorText;
         Debug.Log("BOTON FUNCIONA");
 
         // Cargar escena de juego (cambia "main" por tu escena)
-        SceneManager.LoadScene("main");
+        SceneManager.LoadScene("CharacterSelectScreen");
     }
 
     // =========================

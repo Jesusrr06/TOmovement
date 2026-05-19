@@ -907,9 +907,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83d96b1ea44881543ada4cb4647d232b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  playerPrefabs:
+  playerPrefabsP1:
   - {fileID: 665898128574441555, guid: 26035d5e91882e14d8ad494882a46dbc, type: 3}
-  - {fileID: 665898128574441555, guid: 530d0a9462eea90478a72c9bd53737df, type: 3}
+  - {fileID: 8473432724900476285, guid: 530d0a9462eea90478a72c9bd53737df, type: 3}
+  playerPrefabsP2:
+  - {fileID: 665898128574441555, guid: c84177603d051064da9ad3b8f5fad876, type: 3}
+  - {fileID: 8473432724900476285, guid: db36950f708e44d4e8d551b2e5dc9ba0, type: 3}
   healthBarP1: {fileID: 1038299616}
   healthBarP2: {fileID: 856191778}
   gameOverPanel: {fileID: 1035296656}
@@ -1236,7 +1239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBar
   fillImage: {fileID: 1038299614}
-  target: {fileID: -2986725429931929934, guid: 26035d5e91882e14d8ad494882a46dbc, type: 3}
+  target: {fileID: 0}
 --- !u!1 &1444464488
 GameObject:
   m_ObjectHideFlags: 0

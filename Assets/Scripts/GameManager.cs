@@ -1,15 +1,18 @@
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Spawns players, wires UI and camera, and handles round end / restart logic.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    [Header("Players")]
-    public GameObject[] playerPrefabs;
+    [FormerlySerializedAs("playerPrefabs")] [Header("Players")]
+    public GameObject[] playerPrefabsP1;
+    public GameObject[] playerPrefabsP2;
 
     [Header("UI")]
     public HealthBar healthBarP1;
@@ -40,8 +43,14 @@ public class GameManager : MonoBehaviour
          _player1 = new GameObject("Player1");
         _player1.transform.position = spawnP1.position;
         _player1.transform.rotation = spawnP1.rotation;
+        int num=0;
+        if (GameData.Player1Character < 0 || GameData.Player1Character > 1)
+        {
+            GameData.Player1Character = Random.Range(0, 2);
 
-        GameObject model1 = Instantiate(playerPrefabs[GameData.Player1Character], _player1.transform, true);
+        }
+
+        GameObject model1 = Instantiate(playerPrefabsP1[GameData.Player1Character], _player1.transform, true);
         model1.transform.localPosition = Vector3.zero;
         model1.transform.localRotation = Quaternion.identity;
         model1.tag = "Player1";
@@ -53,15 +62,18 @@ public class GameManager : MonoBehaviour
         _player2 = new GameObject("Player2");
         _player2.transform.position = spawnP2.position;
         _player2.transform.rotation = spawnP2.rotation;
+        if (GameData.Player2Character < 0 || GameData.Player2Character > 1)
+        {
+            GameData.Player2Character = Random.Range(0, 2);
 
-        GameObject model2 = Instantiate(playerPrefabs[GameData.Player2Character], _player2.transform, true);
+        }
+        GameObject model2 = Instantiate(playerPrefabsP2[GameData.Player2Character], _player2.transform, true);
         model2.tag = "Player2";
         model2.transform.localPosition = Vector3.zero;
         model2.transform.localRotation = Quaternion.identity;
         _player2.tag = "Player2";
 
-        yield return null;
-        WaitForSeconds wait = new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.2f);
 
         // =========================
         // Health

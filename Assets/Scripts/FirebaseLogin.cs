@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using Firebase;
 using Firebase.Extensions;
 using Firebase.Auth;
@@ -7,13 +8,24 @@ public class FirebaseLogin  : MonoBehaviour
 {
     private FirebaseAuth auth;
     private FirebaseUser user;
-    public FirebaseLogin firebaseLogin;
+    // Optional automatic test: set in inspector (disabled by default)
+    public bool autoTest = false;
+    public string testEmail = "test@test.com";
+    public string testPassword = "123456";
 
     void Start()
     {
-        firebaseLogin.Register("test@test.com", "123456");
-    
-        firebaseLogin.Login("test@test.com", "123456");
+        if (autoTest)
+        {
+            // Use Register then Login in the continuation to ensure the user exists
+            Register(testEmail, testPassword, (ok, msg) =>
+            {
+                if (ok)
+                    Login(testEmail, testPassword);
+                else
+                    Debug.LogWarning($"AutoTest Register failed: {msg}");
+            });
+        }
     }
     public bool FirebaseReady { get; private set; }
 
@@ -46,11 +58,12 @@ public class FirebaseLogin  : MonoBehaviour
     // =========================
     // REGISTER
     // =========================
-    public void Register(string email, string password)
+    public void Register(string email, string password, Action<bool,string> callback = null)
     {
         if (!FirebaseReady)
         {
             Debug.LogError("Firebase no está listo");
+            callback?.Invoke(false, "Firebase no está listo");
             return;
         }
 
@@ -60,29 +73,33 @@ public class FirebaseLogin  : MonoBehaviour
                 if (task.IsCanceled)
                 {
                     Debug.LogError("Registro cancelado");
+                    callback?.Invoke(false, "Registro cancelado");
                     return;
                 }
 
                 if (task.IsFaulted)
                 {
                     Debug.LogError($"Error registro: {task.Exception}");
+                    callback?.Invoke(false, task.Exception.ToString());
                     return;
                 }
 
                 user = task.Result.User;
 
                 Debug.Log($"Usuario creado: {user.Email}");
+                callback?.Invoke(true, user.Email);
             });
     }
 
     // =========================
     // LOGIN
     // =========================
-    public void Login(string email, string password)
+    public void Login(string email, string password, Action<bool,string> callback = null)
     {
         if (!FirebaseReady)
         {
             Debug.LogError("Firebase no está listo");
+            callback?.Invoke(false, "Firebase no está listo");
             return;
         }
 
@@ -92,18 +109,21 @@ public class FirebaseLogin  : MonoBehaviour
                 if (task.IsCanceled)
                 {
                     Debug.LogError("Login cancelado");
+                    callback?.Invoke(false, "Login cancelado");
                     return;
                 }
 
                 if (task.IsFaulted)
                 {
                     Debug.LogError($"Error login: {task.Exception}");
+                    callback?.Invoke(false, task.Exception.ToString());
                     return;
                 }
 
                 user = task.Result.User;
 
                 Debug.Log($"Login correcto: {user.Email}");
+                callback?.Invoke(true, user.Email);
             });
     }
 
@@ -127,7 +147,7 @@ public class FirebaseLogin  : MonoBehaviour
     // =========================
     public FirebaseUser GetCurrentUser()
     {
-        return auth.CurrentUser;
+        return auth != null ? auth.CurrentUser : null;
     }
 
     // =========================
@@ -135,6 +155,6 @@ public class FirebaseLogin  : MonoBehaviour
     // =========================
     public bool IsLoggedIn()
     {
-        return auth.CurrentUser != null;
+        return auth != null && auth.CurrentUser != null;
     }
 }

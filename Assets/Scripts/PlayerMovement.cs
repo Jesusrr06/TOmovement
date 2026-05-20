@@ -76,37 +76,46 @@ public class PlayerMovement : MonoBehaviour
     /// Ignores input while stunned or if the CharacterController is missing/disabled.
     /// </summary>
     private void HandlePlayerInput()
-    {           if (_characterController is null || !_characterController.enabled)
-                         return;    Vector2 input = Vector2.zero;
+    {
+        if (_characterController is null || !_characterController.enabled)
+            return;
+        Vector2 input = Vector2.zero;
 
-     
- 
+
+        if (!Input.GetKey(KeyCode.E))
+        {
+        
+
             // PLAYER 1
-        if (playerId == 1)
-        {
-            if (Input.GetKey(KeyCode.W)) input.y += 1;
-            if (Input.GetKey(KeyCode.S)) input.y -= 1;
-            if (Input.GetKey(KeyCode.A)) input.x -= 1;
-            if (Input.GetKey(KeyCode.D)) input.x += 1;
-            
-            if (Input.GetKeyDown(KeyCode.Space))
-                Jump();
+            if (playerId == 1)
+            {
+                if (Input.GetKey(KeyCode.W)) input.y += 1;
+                if (Input.GetKey(KeyCode.S)) input.y -= 1;
+                if (Input.GetKey(KeyCode.A)) input.x -= 1;
+                if (Input.GetKey(KeyCode.D)) input.x += 1;
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                    Jump();
+            }
         }
 
-        // PLAYER 2
-        if (playerId == 2)
+        if (!Input.GetKey(KeyCode.Keypad4))
         {
-            if (Input.GetKey(KeyCode.UpArrow)) input.y += 1;
-            if (Input.GetKey(KeyCode.DownArrow)) input.y -= 1;
-            if (Input.GetKey(KeyCode.LeftArrow)) input.x -= 1;
-            if (Input.GetKey(KeyCode.RightArrow)) input.x += 1;
+            // PLAYER 2
+            if (playerId == 2)
+            {
+                if (Input.GetKey(KeyCode.UpArrow)) input.y += 1;
+                if (Input.GetKey(KeyCode.DownArrow)) input.y -= 1;
+                if (Input.GetKey(KeyCode.LeftArrow)) input.x -= 1;
+                if (Input.GetKey(KeyCode.RightArrow)) input.x += 1;
 
-            if (Input.GetKeyDown(KeyCode.Keypad0))
-                Jump();
+                if (Input.GetKeyDown(KeyCode.Keypad0))
+                    Jump();
+            }
         }
-        
-        
-   
+
+
+
         SetInput(input.normalized);
     }
 

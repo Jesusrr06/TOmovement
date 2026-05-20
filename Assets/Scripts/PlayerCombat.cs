@@ -18,7 +18,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private Transform firePoint;
     [Header("Auto-disable (frames)")]
     [Tooltip("Number of frames to keep colliders enabled when activated from this class")]
-    public int hitboxActiveFrames = 3;
+    public int hitboxActiveFrames = 6;
 
     [Header("Combat State")]
     private bool _isPunching;

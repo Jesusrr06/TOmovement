@@ -18,7 +18,14 @@ public class DualCameraFollow : MonoBehaviour
     public float maxZoom = 20f;
 
     [Header("Smoothing")]
-    public float smoothSpeed = 5f;
+    public float smoothTime = 0.2f;
+    public float rotationSpeed = 5f;
+
+    [Header("Camera Angle")]
+    public float angle = 0f;
+
+    // internal smoothing velocity
+    private Vector3 smoothVelocity;
 
     private void Start()
     {
@@ -35,30 +42,31 @@ public class DualCameraFollow : MonoBehaviour
 
     void UpdateCamera()
     {
-        // Punto medio entre jugadores
+        // Middle point between players
         Vector3 center = (player1.position + player2.position) * 0.5f;
 
-        // Distancia entre ellos
+        // Distance between them
         float distance = Vector3.Distance(player1.position, player2.position);
 
-        // Zoom dinámico
-        float zoom = Mathf.Clamp(distance * distanceMultiplier, minZoom, maxZoom);
+        // Desired distance based on players separation
+        float desiredDistance = Mathf.Clamp(distance * distanceMultiplier, minZoom, maxZoom);
 
-        // Posición de cámara
-        Vector3 targetPosition = new Vector3(
-            center.x,
-            center.y + height,
-            center.z - zoom
-        );
+        // Target to look at (slightly above center)
+        Vector3 lookTarget = center + Vector3.up * 1f;
 
-        transform.position = Vector3.Lerp(
-            transform.position,
-            targetPosition,
-            Time.deltaTime * smoothSpeed
-        );
+        // Use a fixed offset direction (relative to world forward) so camera stays behind at an angle
+        Vector3 offsetDir = Quaternion.Euler(0f, angle, 0f) * Vector3.back;
 
-        // Mirar al centro
-        transform.LookAt(center + Vector3.up * 1f);
+        // Compute target position using desired distance and height
+        Vector3 targetPosition = lookTarget + offsetDir * desiredDistance;
+        targetPosition.y = center.y + height;
+
+        // Smoothly move camera towards target position
+        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref smoothVelocity, smoothTime);
+
+        // Smoothly rotate to look at the center
+        Quaternion targetRot = Quaternion.LookRotation((lookTarget - transform.position).normalized, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
     }
 
     private IEnumerator FindPlayers()

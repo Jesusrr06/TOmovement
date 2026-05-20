@@ -10,11 +10,12 @@ public class MainMenu : MonoBehaviour
     [Header("Panels")]
     public GameObject mainMenuPanel;     // Panel principal con botones Play / Quit / Opciones
     public GameObject optionsPanel;      // Otro panel de opciones, por ejemplo
-public TextMeshProUGUI errorText;
+    public TextMeshProUGUI errorText;
+    public GameObject registerPanel;
     public void Start()
     {
         mainMenuPanel.SetActive(true);
-        
+        registerPanel.SetActive(false);
         optionsPanel.SetActive(false);
     }
     
@@ -50,11 +51,19 @@ public TextMeshProUGUI errorText;
         optionsPanel.SetActive(true);
     }
 
+    public void ShowRegisterPanel()
+    {
+        Debug.Log("BOTON FUNCIONA");
+        mainMenuPanel.SetActive(false);
+        registerPanel.SetActive(true);
+    }
     // =========================
     // Volver al panel principal
     // =========================
+
     public void BackToMainMenu()
     {
+        registerPanel.SetActive(false);
         optionsPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }

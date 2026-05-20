@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
     [FormerlySerializedAs("playerPrefabs")] [Header("Players")]
     public GameObject[] playerPrefabsP1;
     public GameObject[] playerPrefabsP2;
-
+    public GameObject player1;
+    public GameObject player2;
     [Header("UI")]
     public HealthBar healthBarP1;
     public HealthBar healthBarP2;
@@ -23,10 +24,6 @@ public class GameManager : MonoBehaviour
     [Header("Spawn")]
     public Transform spawnP1;
     public Transform spawnP2;
-    public DualCameraFollow cam;
-
-    private GameObject _player1;
-    private GameObject _player2;
 
     void Start()
     {
@@ -40,45 +37,43 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private   IEnumerator SpawnPlayers()
     {
-         _player1 = new GameObject("Player1");
-        _player1.transform.position = spawnP1.position;
-        _player1.transform.rotation = spawnP1.rotation;
+        player1.transform.position = spawnP1.position;
+        player1.transform.rotation = spawnP1.rotation;
         if (GameData.Player1Character < 0 || GameData.Player1Character > 1)
         {
             GameData.Player1Character = Random.Range(0, 2);
 
         }
 
-        GameObject model1 = Instantiate(playerPrefabsP1[GameData.Player1Character], _player1.transform, true);
+        GameObject model1 = Instantiate(playerPrefabsP1[GameData.Player1Character], player1.transform, true);
         model1.transform.localPosition = Vector3.zero;
         model1.transform.localRotation = Quaternion.identity;
         model1.tag = "Player1";
-        _player1.tag = "Player1";
+        player1.tag = "Player1";
 
         // =========================
         // PLAYER 2
         // =========================
-        _player2 = new GameObject("Player2");
-        _player2.transform.position = spawnP2.position;
-        _player2.transform.rotation = spawnP2.rotation;
+        player2.transform.position = spawnP2.position;
+        player2.transform.rotation = spawnP2.rotation;
         if (GameData.Player2Character < 0 || GameData.Player2Character > 1)
         {
             GameData.Player2Character = Random.Range(0, 2);
 
         }
-        GameObject model2 = Instantiate(playerPrefabsP2[GameData.Player2Character], _player2.transform, true);
+        GameObject model2 = Instantiate(playerPrefabsP2[GameData.Player2Character], player2.transform, true);
         model2.tag = "Player2";
         model2.transform.localPosition = Vector3.zero;
         model2.transform.localRotation = Quaternion.identity;
-        _player2.tag = "Player2";
+        player2.tag = "Player2";
 
         yield return new WaitForSeconds(0.2f);
 
         // =========================
         // Health
         // =========================
-        Health hp1 = _player1.GetComponentInChildren<Health>();
-        Health hp2 = _player2.GetComponentInChildren<Health>();
+        Health hp1 = player1.GetComponentInChildren<Health>();
+        Health hp2 = player2.GetComponentInChildren<Health>();
 
         // Conectar UI
         healthBarP1.SetTarget(hp1);
@@ -86,12 +81,7 @@ public class GameManager : MonoBehaviour
 
         // Suscribirse al evento de muerte
         hp1.OnDeath += OnPlayerDeath;
-        hp2.OnDeath += OnPlayerDeath;
-        // =========================
-        // Camara
-        // =========================
-        cam.player1 = _player1.transform;
-        cam.player2 = _player2.transform;
+        hp2.OnDeath += OnPlayerDeath; 
     }
     
 
@@ -101,14 +91,14 @@ public class GameManager : MonoBehaviour
     /// <param name="deadPlayer">PlayerMovement of the dead player.</param>
     private void OnPlayerDeath(PlayerMovement deadPlayer)
     {
-        bool p1Died = deadPlayer == _player1.GetComponentInChildren<PlayerMovement>();
+        bool p1Died = deadPlayer == player1.GetComponentInChildren<PlayerMovement>();
         string winner = p1Died ? "Player 2" : "Player 1";
 
         gameOverPanel.SetActive(true);
         winnerText.text = $"{winner} ganó el combate!";
 
-        _player1.GetComponentInChildren<PlayerMovement>().enabled = false;
-        _player2.GetComponentInChildren<PlayerMovement>().enabled = false;
+        player1.GetComponentInChildren<PlayerMovement>().enabled = false;
+        player2.GetComponentInChildren<PlayerMovement>().enabled = false;
 
         Time.timeScale = 0f;
     }

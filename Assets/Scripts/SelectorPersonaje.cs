@@ -9,8 +9,8 @@ public class CharacterSelect : MonoBehaviour
 
     public Image selectorP1;
     public Image selectorP2;
-   private int _indexP1 ;
-   private int _indexP2 ;
+   private int _indexP1=0 ;
+   private int _indexP2=0 ;
 
     void Start()
     {
@@ -50,13 +50,19 @@ public class CharacterSelect : MonoBehaviour
         }
 
         // CONFIRMAR
-        if (Input.GetKeyDown(KeyCode.Insert))
-           GameData.Player1Character= _indexP1;
-        Debug.Log("P1 eligió: " + player1Options[_indexP1].name);
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            GameData.Player1Character = _indexP1;
+            Debug.Log("P1 eligió: " + player1Options[_indexP1].name);
+        }
 
         if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+
             GameData.Player2Character = _indexP2;
-        Debug.Log("P2 eligió: " + player2Options[_indexP2].name);
+            Debug.Log("P2 eligió: " + player2Options[_indexP2].name);
+
+        }
     }
 
     void UpdateSelectors()

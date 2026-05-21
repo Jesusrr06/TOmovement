@@ -107,13 +107,42 @@ public class FirebaseLogin : MonoBehaviour
 
     private string GetError(Exception exception)
     {
-        if (exception == null) return "Error desconocido";
+        if (exception == null)
+            return "Error desconocido";
 
-        var firebaseEx = exception.GetBaseException() as FirebaseException;
+        FirebaseException firebaseEx =
+            exception.GetBaseException() as FirebaseException;
 
         if (firebaseEx != null)
         {
-            return $"Firebase error code: {firebaseEx.ErrorCode}";
+            AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
+
+            switch (errorCode)
+            {
+                case AuthError.EmailAlreadyInUse:
+                    return "Esa cuenta ya existe";
+
+                case AuthError.InvalidEmail:
+                    return "Correo inválido";
+
+                case AuthError.WeakPassword:
+                    return "La contraseña es muy débil";
+
+                case AuthError.WrongPassword:
+                    return "Contraseña incorrecta";
+
+                case AuthError.UserNotFound:
+                    return "No existe una cuenta con ese correo";
+
+                case AuthError.MissingPassword:
+                    return "Falta la contraseña";
+
+                case AuthError.MissingEmail:
+                    return "Falta el correo";
+
+                default:
+                    return "Firebase error: " + errorCode;
+            }
         }
 
         return exception.Message;

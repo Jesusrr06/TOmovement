@@ -12,7 +12,12 @@
           "package_name": "Trying.out.Fighting"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "599943558440-o8on1je7hktqhigpnaedoffc005fteir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD2HYGQ6lVnT3VlNwykJTk35VBgI_GVgrM"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599943558440-o8on1je7hktqhigpnaedoffc005fteir.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -75,3 +75,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 *.yaml
 Assets/Firebase/git-lfs-windows-v3.7.1.exe.meta
+.idea/.idea.TOmovement/.idea/indexLayout.xml

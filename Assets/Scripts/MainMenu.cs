@@ -10,7 +10,7 @@ public class MainMenu : MonoBehaviour
     [Header("Panels")]
     public GameObject mainMenuPanel;     // Panel principal con botones Play / Quit / Opciones
     public GameObject optionsPanel;      // Otro panel de opciones, por ejemplo
-    public TextMeshProUGUI errorText;
+    
     public GameObject registerPanel;
     public void Start()
     {

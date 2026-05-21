@@ -1,160 +1,121 @@
-using UnityEngine;
 using System;
+using System.Threading.Tasks;
 using Firebase;
-using Firebase.Extensions;
 using Firebase.Auth;
+using Firebase.Extensions;
+using UnityEngine;
 
-public class FirebaseLogin  : MonoBehaviour
+public class FirebaseLogin : MonoBehaviour
 {
-    private FirebaseAuth auth;
-    private FirebaseUser user;
-    // Optional automatic test: set in inspector (disabled by default)
-    public bool autoTest = false;
-    public string testEmail = "test@test.com";
-    public string testPassword = "123456";
-
-    void Start()
-    {
-        if (autoTest)
-        {
-            // Use Register then Login in the continuation to ensure the user exists
-            Register(testEmail, testPassword, (ok, msg) =>
-            {
-                if (ok)
-                    Login(testEmail, testPassword);
-                else
-                    Debug.LogWarning($"AutoTest Register failed: {msg}");
-            });
-        }
-    }
     public bool FirebaseReady { get; private set; }
 
-    private void Awake()
+    private FirebaseAuth auth;
+
+    void Awake()
     {
         InitializeFirebase();
     }
 
-    private void InitializeFirebase()
+    void InitializeFirebase()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync()
-            .ContinueWithOnMainThread(task =>
+        FirebaseReady = false;
+
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+        {
+            var status = task.Result;
+
+            if (status == DependencyStatus.Available)
             {
-                DependencyStatus status = task.Result;
+                auth = FirebaseAuth.DefaultInstance;
+                FirebaseReady = true;
 
-                if (status == DependencyStatus.Available)
-                {
-                    auth = FirebaseAuth.DefaultInstance;
-                    FirebaseReady = true;
-
-                    Debug.Log("Firebase inicializado correctamente");
-                }
-                else
-                {
-                    Debug.LogError($"Error Firebase: {status}");
-                }
-            });
+                Debug.Log("✅ Firebase inicializado correctamente");
+            }
+            else
+            {
+                FirebaseReady = false;
+                Debug.LogError("❌ Firebase no disponible: " + status);
+            }
+        });
     }
 
-    // =========================
-    // REGISTER
-    // =========================
-    public void Register(string email, string password, Action<bool,string> callback = null)
+    public void Register(string email, string password, Action<bool, string> callback)
     {
         if (!FirebaseReady)
         {
-            Debug.LogError("Firebase no está listo");
-            callback?.Invoke(false, "Firebase no está listo");
+            callback(false, "Firebase no está listo");
             return;
         }
 
         auth.CreateUserWithEmailAndPasswordAsync(email, password)
             .ContinueWithOnMainThread(task =>
             {
-                if (task.IsCanceled)
-                {
-                    Debug.LogError("Registro cancelado");
-                    callback?.Invoke(false, "Registro cancelado");
-                    return;
-                }
-
                 if (task.IsFaulted)
                 {
-                    Debug.LogError($"Error registro: {task.Exception}");
-                    callback?.Invoke(false, task.Exception.ToString());
+                    string msg = GetError(task.Exception);
+                    callback(false, msg);
                     return;
                 }
 
-                user = task.Result.User;
+                if (task.IsCanceled)
+                {
+                    callback(false, "Registro cancelado");
+                    return;
+                }
 
-                Debug.Log($"Usuario creado: {user.Email}");
-                callback?.Invoke(true, user.Email);
+                callback(true, task.Result.User.Email);
             });
     }
 
-    // =========================
-    // LOGIN
-    // =========================
-    public void Login(string email, string password, Action<bool,string> callback = null)
+    public void Login(string email, string password, Action<bool, string> callback)
     {
         if (!FirebaseReady)
         {
-            Debug.LogError("Firebase no está listo");
-            callback?.Invoke(false, "Firebase no está listo");
+            callback(false, "Firebase no está listo");
             return;
         }
 
         auth.SignInWithEmailAndPasswordAsync(email, password)
             .ContinueWithOnMainThread(task =>
             {
-                if (task.IsCanceled)
-                {
-                    Debug.LogError("Login cancelado");
-                    callback?.Invoke(false, "Login cancelado");
-                    return;
-                }
-
                 if (task.IsFaulted)
                 {
-                    Debug.LogError($"Error login: {task.Exception}");
-                    callback?.Invoke(false, task.Exception.ToString());
+                    string msg = GetError(task.Exception);
+                    callback(false, msg);
                     return;
                 }
 
-                user = task.Result.User;
+                if (task.IsCanceled)
+                {
+                    callback(false, "Login cancelado");
+                    return;
+                }
 
-                Debug.Log($"Login correcto: {user.Email}");
-                callback?.Invoke(true, user.Email);
+                callback(true, task.Result.User.Email);
             });
     }
 
-    // =========================
-    // LOGOUT
-    // =========================
     public void Logout()
     {
-        if (auth == null)
-            return;
-
-        auth.SignOut();
-
-        user = null;
-
-        Debug.Log("Sesión cerrada");
+        if (auth != null)
+            auth.SignOut();
     }
-
-    // =========================
-    // GET CURRENT USER
-    // =========================
     public FirebaseUser GetCurrentUser()
     {
         return auth != null ? auth.CurrentUser : null;
     }
 
-    // =========================
-    // CHECK LOGIN
-    // =========================
-    public bool IsLoggedIn()
+    private string GetError(Exception exception)
     {
-        return auth != null && auth.CurrentUser != null;
+        if (exception == null) return "Error desconocido";
+
+        var firebaseEx = exception.GetBaseException() as FirebaseException;
+
+        if (firebaseEx != null)
+        {
+            return $"Firebase error code: {firebaseEx.ErrorCode}";
+        }
+
+        return exception.Message;
     }
 }

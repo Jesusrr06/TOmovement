@@ -9,14 +9,12 @@ public class MainMenu : MonoBehaviour
 {
     [Header("Panels")]
     public GameObject mainMenuPanel;     // Panel principal con botones Play / Quit / Opciones
-    public GameObject optionsPanel;      // Otro panel de opciones, por ejemplo
     
     public GameObject registerPanel;
     public void Start()
     {
         mainMenuPanel.SetActive(true);
         registerPanel.SetActive(false);
-        optionsPanel.SetActive(false);
     }
     
     // =========================
@@ -48,7 +46,6 @@ public class MainMenu : MonoBehaviour
     {
         Debug.Log("BOTON FUNCIONA");
         mainMenuPanel.SetActive(false);
-        optionsPanel.SetActive(true);
     }
 
     public void ShowRegisterPanel()
@@ -64,7 +61,6 @@ public class MainMenu : MonoBehaviour
     public void BackToMainMenu()
     {
         registerPanel.SetActive(false);
-        optionsPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
 }

@@ -1,144 +1,80 @@
-using Firebase;
+using System;
+using System.Collections;
 using Firebase.Database;
-using Firebase.Unity.Editor; // Required for editor-specific settings if testing in editor
+using TMPro;
 using UnityEngine;
 
 public class FirebaseDatabaseManager : MonoBehaviour
 {
-    DatabaseReference reference;
+public TMP_InputField Username;
+public  TMP_InputField Password;
+    private String userID;
+    private const string DATABASE_URL =
+        "https://tofight-be0d3-default-rtdb.europe-west1.firebasedatabase.app/";
+    private DatabaseReference db;
 
-    void Start()
+    public TMP_Text nametext;
+    public TMP_Text fightstext;
+   void Start()
     {
-        InitializeFirebase();
+        // Conectar a Firebase Realtime Database usando URL manual
+        FirebaseDatabase database = FirebaseDatabase.GetInstance(DATABASE_URL);
+
+        // Referencia raíz
+        db = database.RootReference;
+
+        Debug.Log("✅ Firebase Database conectada correctamente");
+    }
+    public void CreateUser()
+    {
+        UserData newUser= new UserData(Username.text,int.Parse(Password.text));
+       String json= JsonUtility.ToJson(newUser);
+       db.Child("users").Child(userID).SetRawJsonValueAsync(json);
     }
 
-    void InitializeFirebase()
+    public IEnumerator GetName(Action<string> onCallback)
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
-            var dependencyStatus = task.Result;
-            if (dependencyStatus == DependencyStatus.Available)
-            {
-                // Set up the Editor-specific configuration for the Realtime Database.
-                // This is important if you're testing directly in the Unity editor.
-                // Replace "YOUR_DATABASE_URL" with your actual Realtime Database URL (e.g., https://your-project-id-default-rtdb.firebaseio.com)
-                // You can find this in your Firebase Console under Realtime Database -> Data tab.
-                FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://tofight-be0d3-default-rtdb.europe-west1.firebasedatabase.app");
+        var usernamddata = db.Child("user").Child(userID).Child("name").GetValueAsync();
 
-                // Get the root reference location of the database.
-                reference = FirebaseDatabase.DefaultInstance.RootReference;
-                Debug.Log("Firebase Realtime Database initialized successfully!");
-
-                // Example usage:
-                WriteNewUser("player123", "John Doe", "john@example.com");
-                ListenForDataChanges();
-            }
-            else
-            {
-                Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
-            }
-        });
-    }
-
-    // --- Writing Data ---
-    public void WriteNewUser(string userId, string name, string email)
-    {
-        User newUser = new User(name, email);
-        string json = JsonUtility.ToJson(newUser);
-
-        // This will create a child under "users" with the userId as its key
-        // and store the user data.
-        reference.Child("users").Child(userId).SetRawJsonValueAsync(json)
-            .ContinueWith(task => {
-                if (task.IsCompleted)
-                {
-                    Debug.Log("User data saved successfully!");
-                }
-                else if (task.IsFaulted)
-                {
-                    Debug.LogError($"Failed to save user data: {task.Exception}");
-                }
-            });
-    }
-
-    // A simple class to represent your user data structure
-    [System.Serializable]
-    public class User
-    {
-        public string username;
-        public string email;
-
-        public User(string username, string email)
+        yield return new WaitUntil(predicate: () => usernamddata.IsCompleted);
+        if (usernamddata != null)
         {
-            this.username = username;
-            this.email = email;
+            DataSnapshot snapshot = usernamddata.Result;
+
+            onCallback.Invoke(snapshot.Value.ToString());
+
         }
     }
 
-    // --- Reading Data ---
-    public void ReadUserData(string userId)
+
+    public IEnumerator GetFight(Action<int> onCallback)
     {
-        reference.Child("users").Child(userId).GetValueAsync().ContinueWith(task => {
-            if (task.IsCompleted)
+        var usernamddata = db.Child("user").Child(userID).Child("Stats").GetValueAsync();
+
+       yield return new WaitUntil(predicate:() => usernamddata.IsCompleted);
+       if (usernamddata != null)
+       {
+           DataSnapshot snapshot = usernamddata.Result;
+              
+           onCallback.Invoke((int)snapshot.Value);
+              
+       }
+    }
+
+    public void Getuserinfo()
+    {
+        
+        StartCoroutine(GetName((String name) =>
             {
-                DataSnapshot snapshot = task.Result;
-                if (snapshot.Exists)
-                {
-                    // Convert the JSON data back to our User object
-                    string json = snapshot.GetRawJsonValue();
-                    User user = JsonUtility.FromJson<User>(json);
-                    Debug.Log($"Read user: {user.username}, Email: {user.email}");
-                }
-                else
-                {
-                    Debug.LogWarning($"User with ID {userId} not found.");
-                }
-            }
-            else if (task.IsFaulted)
-            {
-                Debug.LogError($"Failed to read user data: {task.Exception}");
-            }
-        });
-    }
+                nametext.text = name;
 
-    // --- Listening for Real-time Changes ---
-    // This method sets up a listener that will be triggered whenever data under "users" changes.
-    public void ListenForDataChanges()
-    {
-        reference.Child("users").ValueChanged += HandleValueChanged;
-        Debug.Log("Listening for user data changes...");
-    }
+            }));
+        StartCoroutine(GetFight((int fights) =>
+        {
+            fightstext.text = "Fights" +fights ;
 
-    void HandleValueChanged(object sender, ValueChangedEventArgs args)
-    {
-        if (args.DatabaseError != null)
-        {
-            Debug.LogError(args.DatabaseError.Message);
-            return;
-        }
+        }));
 
-        DataSnapshot snapshot = args.Snapshot;
-        if (snapshot.Exists)
-        {
-            // Iterate through all users if multiple users are returned
-            foreach (DataSnapshot childSnapshot in snapshot.Children)
-            {
-                string json = childSnapshot.GetRawJsonValue();
-                User user = JsonUtility.FromJson<User>(json);
-                Debug.Log($"Real-time Update - User ID: {childSnapshot.Key}, Name: {user.username}, Email: {user.email}");
-            }
-        }
-        else
-        {
-            Debug.Log("Real-time Update - No user data found at this path.");
-        }
     }
-
-    // Important: Remove the listener when the GameObject is destroyed to prevent memory leaks.
-    void OnDestroy()
-    {
-        if (reference != null)
-        {
-            reference.Child("users").ValueChanged -= HandleValueChanged;
-        }
-    }
-}
+    
+} 

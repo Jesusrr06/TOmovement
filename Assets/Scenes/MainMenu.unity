@@ -3012,9 +3012,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1077f6de1c7ce1479b5036d45a6a17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirebaseLogin
-  autoTest: 0
-  testEmail: test@test.com
-  testPassword: 123456
 --- !u!4 &1235796130
 Transform:
   m_ObjectHideFlags: 0

@@ -6,86 +6,143 @@ using TMPro;
 public class FirebaseAuthUI : MonoBehaviour
 {
     [Header("References")]
-    public FirebaseLogin firebaseLogin; // assign this in inspector (or let Reset find one)
-    public TMP_InputField  emailInput;
-    public TMP_InputField  passwordInput;
+    public FirebaseLogin firebaseLogin;
+    public UserDisplay userDisplay;
 
-    [Header("Controls")]
+    [Header("Inputs")]
+    public TMP_InputField emailInput;
+    public TMP_InputField passwordInput;
+
+    [Header("Buttons")]
     public Button registerButton;
     public Button loginButton;
     public Button logoutButton;
 
     [Header("Feedback")]
-    public TMP_Text  feedbackText;
+    public TMP_Text feedbackText;
 
     void Reset()
     {
         if (firebaseLogin == null)
             firebaseLogin = FindAnyObjectByType<FirebaseLogin>();
+
+        if (userDisplay == null)
+            userDisplay = FindAnyObjectByType<UserDisplay>();
     }
 
     void OnEnable()
     {
-        if (registerButton != null) registerButton.onClick.AddListener(OnRegisterClicked);
-        if (loginButton != null) loginButton.onClick.AddListener(OnLoginClicked);
-        if (logoutButton != null) logoutButton.onClick.AddListener(OnLogoutClicked);
+        if (registerButton != null)
+            registerButton.onClick.AddListener(OnRegisterClicked);
+
+        if (loginButton != null)
+            loginButton.onClick.AddListener(OnLoginClicked);
+
+        if (logoutButton != null)
+            logoutButton.onClick.AddListener(OnLogoutClicked);
     }
 
     void OnDisable()
     {
-        if (registerButton != null) registerButton.onClick.RemoveListener(OnRegisterClicked);
-        if (loginButton != null) loginButton.onClick.RemoveListener(OnLoginClicked);
-        if (logoutButton != null) logoutButton.onClick.RemoveListener(OnLogoutClicked);
+        if (registerButton != null)
+            registerButton.onClick.RemoveListener(OnRegisterClicked);
+
+        if (loginButton != null)
+            loginButton.onClick.RemoveListener(OnLoginClicked);
+
+        if (logoutButton != null)
+            logoutButton.onClick.RemoveListener(OnLogoutClicked);
     }
 
     void OnRegisterClicked()
     {
-        if (!EnsureLogin()) return;
+        if (!EnsureFirebaseReady())
+            return;
+
         firebaseLogin.Register(GetEmail(), GetPassword(), (ok, msg) =>
         {
-            SetFeedback(ok ? "Registrado: " + msg : "Error registro: " + msg);
+            SetFeedback(ok
+                ? " Registrado: " + msg
+                : " Error registro: " + msg);
+
+            RefreshUserDisplay();
         });
     }
 
     void OnLoginClicked()
     {
-        if (!EnsureLogin()) return;
+        if (!EnsureFirebaseReady())
+            return;
+
         firebaseLogin.Login(GetEmail(), GetPassword(), (ok, msg) =>
         {
-            SetFeedback(ok ? "Login correcto: " + msg : "Error login: " + msg);
+            SetFeedback(ok
+                ? " Login correcto: " + msg
+                : " Error login: " + msg);
+
+            RefreshUserDisplay();
         });
     }
 
     void OnLogoutClicked()
     {
-        if (firebaseLogin == null) { SetFeedback("FirebaseLogin no asignado"); return; }
+        if (firebaseLogin == null)
+        {
+            SetFeedback(" FirebaseLogin no asignado");
+            return;
+        }
+
         firebaseLogin.Logout();
+
+        RefreshUserDisplay();
+
         SetFeedback("Sesión cerrada");
     }
 
-    bool EnsureLogin()
+    bool EnsureFirebaseReady()
     {
         if (firebaseLogin == null)
         {
-            SetFeedback("FirebaseLogin no asignado");
+            SetFeedback(" FirebaseLogin no asignado");
             return false;
         }
+
         if (!firebaseLogin.FirebaseReady)
         {
-            SetFeedback("Firebase no está listo aún");
+            SetFeedback(" Firebase no está listo aún");
             return false;
         }
+
         return true;
     }
 
-    string GetEmail() => emailInput != null ? emailInput.text.Trim() : string.Empty;
-    string GetPassword() => passwordInput != null ? passwordInput.text : string.Empty;
+    void RefreshUserDisplay()
+    {
+        if (userDisplay != null)
+        {
+            userDisplay.ShowUserStatus();
+        }
+    }
+
+    string GetEmail()
+    {
+        return emailInput != null
+            ? emailInput.text.Trim()
+            : string.Empty;
+    }
+
+    string GetPassword()
+    {
+        return passwordInput != null
+            ? passwordInput.text
+            : string.Empty;
+    }
 
     void SetFeedback(string msg)
     {
         if (feedbackText != null)
             feedbackText.text = msg;
-        else
-            Debug.Log(msg);
+
+        Debug.Log(msg);
     }
 }

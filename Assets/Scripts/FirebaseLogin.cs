@@ -29,12 +29,12 @@ public class FirebaseLogin : MonoBehaviour
                 auth = FirebaseAuth.DefaultInstance;
                 FirebaseReady = true;
 
-                Debug.Log("✅ Firebase inicializado correctamente");
+                Debug.Log("Firebase inicializado correctamente");
             }
             else
             {
                 FirebaseReady = false;
-                Debug.LogError("❌ Firebase no disponible: " + status);
+                Debug.LogError(" Firebase no disponible: " + status);
             }
         });
     }
@@ -104,7 +104,17 @@ public class FirebaseLogin : MonoBehaviour
     {
         return auth != null ? auth.CurrentUser : null;
     }
+ 
 
+    public string GetUserID()
+    {
+        if (auth != null && auth.CurrentUser != null)
+        {
+            return auth.CurrentUser.UserId;
+        }
+
+        return null;
+    }
     private string GetError(Exception exception)
     {
         if (exception == null)

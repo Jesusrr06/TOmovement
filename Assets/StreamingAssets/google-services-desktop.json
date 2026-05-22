@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "599943558440",
+    "firebase_url": "https://tofight-be0d3-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "tofight-be0d3",
     "storage_bucket": "tofight-be0d3.firebasestorage.app"
   },

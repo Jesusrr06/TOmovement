@@ -1,80 +1,116 @@
 using System;
 using System.Collections;
+using Firebase.Auth;
+using Firebase.Extensions;
 using Firebase.Database;
 using TMPro;
 using UnityEngine;
 
 public class FirebaseDatabaseManager : MonoBehaviour
 {
-public TMP_InputField Username;
-public  TMP_InputField Password;
-    private String userID;
-    private const string DATABASE_URL =
-        "https://tofight-be0d3-default-rtdb.europe-west1.firebasedatabase.app/";
-    private DatabaseReference db;
+    public TMP_InputField Username;
+    public TMP_InputField Password;
+    public TMP_InputField Usernameupdate;
+    public TMP_InputField Usernamedelete;
 
     public TMP_Text nametext;
-    public TMP_Text fightstext;
-   void Start()
+
+    private string userID;
+    private DatabaseReference db;
+
+    void Start()
     {
-        // Conectar a Firebase Realtime Database usando URL manual
-        FirebaseDatabase database = FirebaseDatabase.GetInstance(DATABASE_URL);
-
-        // Referencia raíz
-        db = database.RootReference;
-
-        Debug.Log("✅ Firebase Database conectada correctamente");
+        db = FirebaseDatabase.DefaultInstance.RootReference;
+        Debug.Log("Firebase Database conectada correctamente");
     }
+
+    // 🔥 CREATE USER (SOLO NAME)
     public void CreateUser()
     {
-        UserData newUser= new UserData(Username.text,int.Parse(Password.text));
-       String json= JsonUtility.ToJson(newUser);
-       db.Child("users").Child(userID).SetRawJsonValueAsync(json);
+        userID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
+
+        if (string.IsNullOrEmpty(userID))
+        {
+            Debug.LogError("Usuario no logueado");
+            return;
+        }
+
+        db.Child("user")
+          .Child(userID)
+          .Child("name")
+          .SetValueAsync(Username.text);
     }
 
+    // 🔥 GET NAME
     public IEnumerator GetName(Action<string> onCallback)
     {
-        var usernamddata = db.Child("user").Child(userID).Child("name").GetValueAsync();
+        userID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
 
-        yield return new WaitUntil(predicate: () => usernamddata.IsCompleted);
-        if (usernamddata != null)
+        if (string.IsNullOrEmpty(userID))
         {
-            DataSnapshot snapshot = usernamddata.Result;
-
-            onCallback.Invoke(snapshot.Value.ToString());
-
+            onCallback?.Invoke("N/A");
+            yield break;
         }
+
+        var task = db.Child("user")
+                     .Child(userID)
+                     .Child("name")
+                     .GetValueAsync();
+
+        yield return new WaitUntil(() => task.IsCompleted);
+
+        if (task.Exception != null)
+        {
+            Debug.LogError("Error leyendo name: " + task.Exception);
+            onCallback?.Invoke("Error");
+            yield break;
+        }
+
+        string name = task.Result.Value?.ToString() ?? "N/A";
+
+        onCallback?.Invoke(name);
     }
 
-
-    public IEnumerator GetFight(Action<int> onCallback)
+    // 🔥 CHANGE NAME
+    public void ChangeName()
     {
-        var usernamddata = db.Child("user").Child(userID).Child("Stats").GetValueAsync();
+        userID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
 
-       yield return new WaitUntil(predicate:() => usernamddata.IsCompleted);
-       if (usernamddata != null)
-       {
-           DataSnapshot snapshot = usernamddata.Result;
-              
-           onCallback.Invoke((int)snapshot.Value);
-              
-       }
+        if (string.IsNullOrEmpty(userID))
+        {
+            Debug.LogError("No hay usuario logueado");
+            return;
+        }
+
+        db.Child("user")
+          .Child(userID)
+          .Child("name")
+          .SetValueAsync(Usernameupdate.text);
     }
 
+    // 🔥 DELETE USER (SOLO NAME)
+    public void DeleteUserData()
+    {
+        userID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
+
+        if (string.IsNullOrEmpty(userID))
+        {
+            Debug.LogError("No hay usuario logueado");
+            return;
+        }
+
+        db.Child("user")
+          .Child(userID)
+          .Child("name")
+          .RemoveValueAsync();
+    }
+
+    // 🔥 UI LOAD
     public void Getuserinfo()
     {
-        
-        StartCoroutine(GetName((String name) =>
-            {
-                nametext.text = name;
-
-            }));
-        StartCoroutine(GetFight((int fights) =>
+        StartCoroutine(GetName((string name) =>
         {
-            fightstext.text = "Fights" +fights ;
-
+            nametext.text = name;
         }));
-
     }
-    
-} 
+}

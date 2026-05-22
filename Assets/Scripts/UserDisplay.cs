@@ -16,7 +16,7 @@ public class UserDisplay : MonoBehaviour
         ShowUserStatus();
     }
 
-    private void ShowUserStatus()
+    internal void ShowUserStatus()
     {
         if (firebaseLogin == null)
         {
@@ -32,11 +32,11 @@ public class UserDisplay : MonoBehaviour
                 ? "Usuario sin email"
                 : user.Email;
 
-            SetText("✅ Logueado\n" + email);
+            SetText(" Logueado\n" + email);
         }
         else
         {
-            SetText("❌ No hay ninguna cuenta iniciada");
+            SetText(" No hay ninguna cuenta iniciada");
         }
     }
 

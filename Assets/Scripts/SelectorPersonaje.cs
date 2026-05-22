@@ -50,7 +50,7 @@ public class CharacterSelect : MonoBehaviour
         }
 
         // CONFIRMAR
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             GameData.Player1Character = _indexP1;
             Debug.Log("P1 eligió: " + player1Options[_indexP1].name);

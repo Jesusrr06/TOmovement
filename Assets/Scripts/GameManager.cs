@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public HealthBar healthBarP2;
     public GameObject gameOverPanel;
     public TextMeshProUGUI winnerText;
-
+    
     [Header("Spawn")]
     public Transform spawnP1;
     public Transform spawnP2;
@@ -37,37 +37,92 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private   IEnumerator SpawnPlayers()
     {
-        player1.transform.position = spawnP1.position;
-        player1.transform.rotation = spawnP1.rotation;
-        if (GameData.Player1Character < 0 || GameData.Player1Character > 1)
-        {
-            GameData.Player1Character = Random.Range(0, 2);
 
+      
+        if (player1 is null || player2 is null)
+        {
+            Debug.LogError("player1 or player2 root not assigned in GameManager.");
+            yield break;
         }
 
+        // Ensure valid indices (use available prefab lengths)
+        if (GameData.Player1Character < 0 || GameData.Player1Character >= playerPrefabsP1.Length)
+        {
+            int old = GameData.Player1Character;
+            GameData.Player1Character = Random.Range(0, playerPrefabsP1.Length);
+            Debug.LogWarning($"Player1Character invalid ({old}) — randomized to {GameData.Player1Character}");
+        }
+        if (GameData.Player2Character < 0 || GameData.Player2Character >= playerPrefabsP2.Length)
+        {
+            int old = GameData.Player2Character;
+            GameData.Player2Character = Random.Range(0, playerPrefabsP2.Length);
+            Debug.LogWarning($"Player2Character invalid ({old}) — randomized to {GameData.Player2Character}");
+        }
+
+        player1.transform.position = spawnP1.position;
+        player1.transform.rotation = spawnP1.rotation;
+
+        // Safety: temporarily keep movement components disabled until positioned to avoid immediate physics/input moving the character out of bounds.
+        PlayerMovement pm1 = null, pm2 = null;
+        CharacterController cc1 = null, cc2 = null;
+
+        Debug.Log($"Spawning P1 index={GameData.Player1Character} prefab={playerPrefabsP1[GameData.Player1Character].name}");
         GameObject model1 = Instantiate(playerPrefabsP1[GameData.Player1Character], player1.transform, true);
-        model1.transform.localPosition = Vector3.zero;
-        model1.transform.localRotation = Quaternion.identity;
-        model1.tag = "Player1";
-        player1.tag = "Player1";
+        if (model1 is null)
+        {
+            Debug.LogError("Instantiate returned null for P1");
+        }
+        else
+        {
+            model1.transform.localPosition = Vector3.zero;
+            model1.transform.localRotation = Quaternion.identity;
+            model1.tag = "Player1";
+            model1.name = model1.name + "_P1";
+            player1.tag = "Player1";
+            Debug.Log($"P1 instantiated: {model1.name}, player1 children={player1.transform.childCount}");
+
+            // Disable movement/character controller immediately to prevent any Awake/Start movement from relocating the model before positioning is final.
+            pm1 = model1.GetComponentInChildren<PlayerMovement>();
+            cc1 = model1.GetComponentInChildren<CharacterController>();
+            if (pm1 != null) pm1.enabled = false;
+            if (cc1 != null) cc1.enabled = false;
+        }
 
         // =========================
         // PLAYER 2
         // =========================
         player2.transform.position = spawnP2.position;
         player2.transform.rotation = spawnP2.rotation;
-        if (GameData.Player2Character < 0 || GameData.Player2Character > 1)
-        {
-            GameData.Player2Character = Random.Range(0, 2);
 
-        }
+        Debug.Log($"Spawning P2 index={GameData.Player2Character} prefab={playerPrefabsP2[GameData.Player2Character].name}");
         GameObject model2 = Instantiate(playerPrefabsP2[GameData.Player2Character], player2.transform, true);
-        model2.tag = "Player2";
-        model2.transform.localPosition = Vector3.zero;
-        model2.transform.localRotation = Quaternion.identity;
-        player2.tag = "Player2";
+        if (model2 is null)
+        {
+            Debug.LogError("Instantiate returned null for P2");
+        }
+        else
+        {
+            model2.tag = "Player2";
+            model2.transform.localPosition = Vector3.zero;
+            model2.transform.localRotation = Quaternion.identity;
+            model2.name = model2.name + "_P2";
+            player2.tag = "Player2";
+            Debug.Log($"P2 instantiated: {model2.name}, player2 children={player2.transform.childCount}");
+
+            // Disable movement/character controller until repositioning completes.
+            pm2 = model2.GetComponentInChildren<PlayerMovement>();
+            cc2 = model2.GetComponentInChildren<CharacterController>();
+            if (pm2 != null) pm2.enabled = false;
+            if (cc2 != null) cc2.enabled = false;
+        }
 
         yield return new WaitForSeconds(0.2f);
+
+        // Re-enable movement components now that positioning is stable.
+        if (cc1 != null) cc1.enabled = true;
+        if (pm1 != null) pm1.enabled = true;
+        if (cc2 != null) cc2.enabled = true;
+        if (pm2 != null) pm2.enabled = true;
 
         // =========================
         // Health
@@ -75,13 +130,16 @@ public class GameManager : MonoBehaviour
         Health hp1 = player1.GetComponentInChildren<Health>();
         Health hp2 = player2.GetComponentInChildren<Health>();
 
-        // Conectar UI
-        healthBarP1.SetTarget(hp1);
-        healthBarP2.SetTarget(hp2);
+        if (hp1 == null) Debug.LogError("Health component not found under player1 after instantiation.");
+        if (hp2 == null) Debug.LogError("Health component not found under player2 after instantiation.");
 
-        // Suscribirse al evento de muerte
-        hp1.OnDeath += OnPlayerDeath;
-        hp2.OnDeath += OnPlayerDeath; 
+        // Conectar UI (solo si existen)
+        if (hp1 != null) healthBarP1.SetTarget(hp1);
+        if (hp2 != null) healthBarP2.SetTarget(hp2);
+
+        // Suscribirse al evento de muerte (si existen)
+        if (hp1 != null) hp1.OnDeath += OnPlayerDeath;
+        if (hp2 != null) hp2.OnDeath += OnPlayerDeath;
     }
     
 

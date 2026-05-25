@@ -12,9 +12,10 @@ public class HealthBar : MonoBehaviour
     private void Start()
     {
         if (target == null)
-        {
+        { 
+            WaitForEndOfFrame frame = new WaitForEndOfFrame(); 
             Debug.LogWarning($"HealthBar '{gameObject.name}' has no target assigned.");
-            return;
+            return  ;
         }
 
         if (fillImage == null)
@@ -35,7 +36,8 @@ public class HealthBar : MonoBehaviour
         // unsubscribe previous
         if (target != null)
             target.OnHealthChanged -= UpdateBar;
-        target = h;
+
+        target = h;
 
         if (target is not null)
         {

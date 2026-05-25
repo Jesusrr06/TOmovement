@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Controls main menu UI: start, quit and panel navigation.
@@ -9,10 +10,11 @@ public class MainMenu : MonoBehaviour
 {
     [Header("Panels")]
     public GameObject mainMenuPanel;     // Panel principal con botones Play / Quit / Opciones
-    
+    [FormerlySerializedAs("LoadText")] public TMP_Text loadText;
     public GameObject registerPanel;
     public void Start()
     {
+        loadText.SetText("");
         mainMenuPanel.SetActive(true);
         registerPanel.SetActive(false);
     }
@@ -22,12 +24,19 @@ public class MainMenu : MonoBehaviour
     // =========================
     public void StartGame()
     {
+        loadText.SetText("Loading characters...");
+        
         Debug.Log("BOTON FUNCIONA");
-
+        float forSeconds = 6.5f;
+      
         // Cargar escena de juego (cambia "main" por tu escena)
+        Invoke(nameof(LoadScene), forSeconds);
+    }
+    void LoadScene()
+    {
         SceneManager.LoadScene("CharacterSelectScreen");
     }
-
+    
     // =========================
     // Botón Quit
     // =========================

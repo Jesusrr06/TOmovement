@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -6,7 +7,7 @@ public class CharacterSelect : MonoBehaviour
 {
     public Image[] player1Options;
     public Image[] player2Options;
-
+    public TMP_Text loadingText;
     public Image selectorP1;
     public Image selectorP2;
    private int _indexP1=0 ;
@@ -14,6 +15,8 @@ public class CharacterSelect : MonoBehaviour
 
     void Start()
     {
+        loadingText.text = "";
+        
         UpdateSelectors();
     }
 
@@ -67,13 +70,27 @@ public class CharacterSelect : MonoBehaviour
 
     void UpdateSelectors()
     {    Vector3 offset = new Vector3(0, -80f, 0); // ajusta este valor
-
+       
         selectorP1.transform.position = player1Options[_indexP1].transform.position+offset;
         selectorP2.transform.position = player2Options[_indexP2].transform.position+offset;
     }
     public void StartGame()
     {
+        loadingText.SetText("Loading stage...");
+        float f = 3.5f;
+        Invoke(nameof(Changetext),f);
+
+        Invoke(nameof(Loadscene),f);
+        
+    }
+    void  Loadscene()
+    {
         SceneManager.LoadScene("main");
     }
-    
+
+    void Changetext()
+    {
+        loadingText.SetText("Loading Characters...");
+    }
+
 }

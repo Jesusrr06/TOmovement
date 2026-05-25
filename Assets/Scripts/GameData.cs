@@ -3,6 +3,7 @@
 /// </summary>
 public static class GameData
 {
-    public static int Player1Character;
-    public static int Player2Character;
+    // Inicializar a -1 para detectar no-selección explícita en la pantalla de selección
+    public static int Player1Character = -1;
+    public static int Player2Character = -1;
 }

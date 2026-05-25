@@ -7,12 +7,12 @@ public class PlayerDataRtdb : MonoBehaviour
     private FirebaseAuth auth;
     private DatabaseReference db;
 
-    void Start()
-    {
+  /*  void Start()
+  {
         auth = FirebaseAuth.DefaultInstance;
         db = FirebaseDatabase.DefaultInstance.RootReference;
     }
-
+*/
     // =========================
     // 📥 CARGAR SOLO PROFILE
     // =========================
